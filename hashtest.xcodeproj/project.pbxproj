@@ -1,0 +1,277 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2BC0A3531D506D180018BED6 /* MurmurHash2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A34B1D506D180018BED6 /* MurmurHash2.cpp */; };
+		2BC0A3541D506D180018BED6 /* MurmurHash3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A34D1D506D180018BED6 /* MurmurHash3.cpp */; };
+		2BC0A3551D506D180018BED6 /* SpookyV2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A34F1D506D180018BED6 /* SpookyV2.cpp */; };
+		2BC0A3561D506D180018BED6 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A3511D506D180018BED6 /* xxhash.c */; };
+		2BC0A3581D506D270018BED6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A3571D506D270018BED6 /* main.cpp */; };
+		2BC0A35D1D506D7F0018BED6 /* FNVHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A35A1D506D7F0018BED6 /* FNVHash.cpp */; };
+		2BC0A35F1D5089AC0018BED6 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A35E1D5089AC0018BED6 /* crc.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2BC0A33F1D506CE60018BED6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		2BC0A3411D506CE60018BED6 /* hashtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hashtest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BC0A34B1D506D180018BED6 /* MurmurHash2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MurmurHash2.cpp; sourceTree = "<group>"; };
+		2BC0A34C1D506D180018BED6 /* MurmurHash2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash2.h; sourceTree = "<group>"; };
+		2BC0A34D1D506D180018BED6 /* MurmurHash3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MurmurHash3.cpp; sourceTree = "<group>"; };
+		2BC0A34E1D506D180018BED6 /* MurmurHash3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MurmurHash3.h; sourceTree = "<group>"; };
+		2BC0A34F1D506D180018BED6 /* SpookyV2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpookyV2.cpp; sourceTree = "<group>"; };
+		2BC0A3501D506D180018BED6 /* SpookyV2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpookyV2.h; sourceTree = "<group>"; };
+		2BC0A3511D506D180018BED6 /* xxhash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xxhash.c; sourceTree = "<group>"; };
+		2BC0A3521D506D180018BED6 /* xxhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xxhash.h; sourceTree = "<group>"; };
+		2BC0A3571D506D270018BED6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		2BC0A3591D506D7F0018BED6 /* CStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CStringHash.h; sourceTree = "<group>"; };
+		2BC0A35A1D506D7F0018BED6 /* FNVHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FNVHash.cpp; sourceTree = "<group>"; };
+		2BC0A35B1D506D7F0018BED6 /* FNVHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNVHash.h; sourceTree = "<group>"; };
+		2BC0A35C1D506D7F0018BED6 /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; };
+		2BC0A35E1D5089AC0018BED6 /* crc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = crc.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2BC0A33E1D506CE60018BED6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2BC0A3381D506CE60018BED6 = {
+			isa = PBXGroup;
+			children = (
+				2BC0A35E1D5089AC0018BED6 /* crc.cpp */,
+				2BC0A3591D506D7F0018BED6 /* CStringHash.h */,
+				2BC0A35A1D506D7F0018BED6 /* FNVHash.cpp */,
+				2BC0A35B1D506D7F0018BED6 /* FNVHash.h */,
+				2BC0A35C1D506D7F0018BED6 /* HashFunctions.h */,
+				2BC0A3571D506D270018BED6 /* main.cpp */,
+				2BC0A34B1D506D180018BED6 /* MurmurHash2.cpp */,
+				2BC0A34C1D506D180018BED6 /* MurmurHash2.h */,
+				2BC0A34D1D506D180018BED6 /* MurmurHash3.cpp */,
+				2BC0A34E1D506D180018BED6 /* MurmurHash3.h */,
+				2BC0A34F1D506D180018BED6 /* SpookyV2.cpp */,
+				2BC0A3501D506D180018BED6 /* SpookyV2.h */,
+				2BC0A3511D506D180018BED6 /* xxhash.c */,
+				2BC0A3521D506D180018BED6 /* xxhash.h */,
+				2BC0A3421D506CE60018BED6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2BC0A3421D506CE60018BED6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2BC0A3411D506CE60018BED6 /* hashtest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2BC0A3401D506CE60018BED6 /* hashtest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2BC0A3481D506CE60018BED6 /* Build configuration list for PBXNativeTarget "hashtest" */;
+			buildPhases = (
+				2BC0A33D1D506CE60018BED6 /* Sources */,
+				2BC0A33E1D506CE60018BED6 /* Frameworks */,
+				2BC0A33F1D506CE60018BED6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = hashtest;
+			productName = hashtest;
+			productReference = 2BC0A3411D506CE60018BED6 /* hashtest */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2BC0A3391D506CE60018BED6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = Aras;
+				TargetAttributes = {
+					2BC0A3401D506CE60018BED6 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 2BC0A33C1D506CE60018BED6 /* Build configuration list for PBXProject "hashtest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 2BC0A3381D506CE60018BED6;
+			productRefGroup = 2BC0A3421D506CE60018BED6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2BC0A3401D506CE60018BED6 /* hashtest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2BC0A33D1D506CE60018BED6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BC0A3531D506D180018BED6 /* MurmurHash2.cpp in Sources */,
+				2BC0A3561D506D180018BED6 /* xxhash.c in Sources */,
+				2BC0A35D1D506D7F0018BED6 /* FNVHash.cpp in Sources */,
+				2BC0A3551D506D180018BED6 /* SpookyV2.cpp in Sources */,
+				2BC0A3581D506D270018BED6 /* main.cpp in Sources */,
+				2BC0A3541D506D180018BED6 /* MurmurHash3.cpp in Sources */,
+				2BC0A35F1D5089AC0018BED6 /* crc.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2BC0A3461D506CE60018BED6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2BC0A3471D506CE60018BED6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2BC0A3491D506CE60018BED6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2BC0A34A1D506CE60018BED6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2BC0A33C1D506CE60018BED6 /* Build configuration list for PBXProject "hashtest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2BC0A3461D506CE60018BED6 /* Debug */,
+				2BC0A3471D506CE60018BED6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2BC0A3481D506CE60018BED6 /* Build configuration list for PBXNativeTarget "hashtest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2BC0A3491D506CE60018BED6 /* Debug */,
+				2BC0A34A1D506CE60018BED6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2BC0A3391D506CE60018BED6 /* Project object */;
+}
