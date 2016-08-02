@@ -12,7 +12,6 @@
 		2BC0A3551D506D180018BED6 /* SpookyV2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A34F1D506D180018BED6 /* SpookyV2.cpp */; };
 		2BC0A3561D506D180018BED6 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A3511D506D180018BED6 /* xxhash.c */; };
 		2BC0A3581D506D270018BED6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A3571D506D270018BED6 /* main.cpp */; };
-		2BC0A35D1D506D7F0018BED6 /* FNVHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A35A1D506D7F0018BED6 /* FNVHash.cpp */; };
 		2BC0A35F1D5089AC0018BED6 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A35E1D5089AC0018BED6 /* crc.cpp */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +39,6 @@
 		2BC0A3521D506D180018BED6 /* xxhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xxhash.h; sourceTree = "<group>"; };
 		2BC0A3571D506D270018BED6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2BC0A3591D506D7F0018BED6 /* CStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CStringHash.h; sourceTree = "<group>"; };
-		2BC0A35A1D506D7F0018BED6 /* FNVHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FNVHash.cpp; sourceTree = "<group>"; };
 		2BC0A35B1D506D7F0018BED6 /* FNVHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNVHash.h; sourceTree = "<group>"; };
 		2BC0A35C1D506D7F0018BED6 /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; };
 		2BC0A35E1D5089AC0018BED6 /* crc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = crc.cpp; sourceTree = "<group>"; };
@@ -62,7 +60,6 @@
 			children = (
 				2BC0A35E1D5089AC0018BED6 /* crc.cpp */,
 				2BC0A3591D506D7F0018BED6 /* CStringHash.h */,
-				2BC0A35A1D506D7F0018BED6 /* FNVHash.cpp */,
 				2BC0A35B1D506D7F0018BED6 /* FNVHash.h */,
 				2BC0A35C1D506D7F0018BED6 /* HashFunctions.h */,
 				2BC0A3571D506D270018BED6 /* main.cpp */,
@@ -144,7 +141,6 @@
 			files = (
 				2BC0A3531D506D180018BED6 /* MurmurHash2.cpp in Sources */,
 				2BC0A3561D506D180018BED6 /* xxhash.c in Sources */,
-				2BC0A35D1D506D7F0018BED6 /* FNVHash.cpp in Sources */,
 				2BC0A3551D506D180018BED6 /* SpookyV2.cpp in Sources */,
 				2BC0A3581D506D270018BED6 /* main.cpp in Sources */,
 				2BC0A3541D506D180018BED6 /* MurmurHash3.cpp in Sources */,

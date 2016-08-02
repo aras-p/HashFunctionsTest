@@ -163,7 +163,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\crc.cpp" />
-    <ClCompile Include="..\FNVHash.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\MurmurHash2.cpp" />
     <ClCompile Include="..\MurmurHash3.cpp" />

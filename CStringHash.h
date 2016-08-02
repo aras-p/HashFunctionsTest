@@ -5,12 +5,12 @@
 // It's a bad hash function! Do not do things like this.
 struct hash_cstring
 {
-	unsigned operator ()(const char* key) const
+	unsigned operator ()(const char* key, int size) const
 	{
 		unsigned h = 0;
 		const unsigned sr = 8 * sizeof (unsigned) - 8;
 		const unsigned mask = 0xFu << (sr + 4);
-		while (*key != '\0')
+		for (int i = 0; i < size; ++i)
 		{
 			h = (h << 4) + *key;
 			unsigned g = h & mask;

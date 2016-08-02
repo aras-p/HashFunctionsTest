@@ -86,6 +86,9 @@ typedef std::vector<std::string> WordList;
 static WordList g_Words;
 static size_t g_TotalSize;
 
+static std::string g_SyntheticData;
+
+
 static void ReadWords(const char* filename)
 {
 	g_Words.clear();
@@ -130,7 +133,7 @@ static void ReadWords(const char* filename)
 
 
 template<typename Hasher>
-void TestHash(const Hasher& hasher, const char* name)
+void TestOnData(const Hasher& hasher, const char* name)
 {
 	// hash all the entries; do several iterations and pick smallest time
 	typename Hasher::HashType hashsum = 0x1234;
@@ -140,13 +143,14 @@ void TestHash(const Hasher& hasher, const char* name)
 		TimerBegin();
 		for (size_t i = 0, n = g_Words.size(); i != n; ++i)
 		{
-			hashsum ^= hasher(g_Words[i]);
+			const std::string& s = g_Words[i];
+			hashsum ^= hasher(s.data(), s.size());
 		}
 		float sec = TimerEnd();
 		if (sec < minsec)
 			minsec = sec;
 	}
-	// MB/s
+	// MB/s on real data
 	double mbps = (g_TotalSize / 1024.0 / 1024.0) / minsec;
 
 	// test for "hash quality":
@@ -157,7 +161,8 @@ void TestHash(const Hasher& hasher, const char* name)
 	std::set<typename Hasher::HashType> uniq16;
 	for (size_t i = 0, n = g_Words.size(); i != n; ++i)
 	{
-		typename Hasher::HashType h = hasher(g_Words[i]);
+		const std::string& s = g_Words[i];
+		typename Hasher::HashType h = hasher(s.data(), s.size());
 		uniq.insert(h);
 		uniq16.insert(h & 0xFFFF);
 	}
@@ -169,61 +174,98 @@ void TestHash(const Hasher& hasher, const char* name)
 }
 
 
+template<typename Hasher>
+void TestHashPerformance(const Hasher& hasher, const char* name)
+{
+	// synthetic hash performance test on various string lengths
+	int step = 2;
+	for (int len = 2; len < 4000; len += step, step += step/2)
+	{
+		typename Hasher::HashType hashsum = 0x1234;
+		size_t dataLen = g_SyntheticData.size();
+		// do several iterations and pick smallest time
+		float minsec = 1.0e6f;
+		size_t totalBytes = 0;
+		for (int iterations = 0; iterations < 5; ++iterations)
+		{
+			
+			const char* dataPtr = g_SyntheticData.data();
+			TimerBegin();
+			size_t pos = 0;
+			while (pos + len < dataLen)
+			{
+				hashsum ^= hasher(dataPtr + pos, len);
+				pos += len;
+			}
+			float sec = TimerEnd();
+			totalBytes = pos;
+			if (sec < minsec)
+				minsec = sec;
+		}
+		// MB/s
+		double mbps = (totalBytes / 1024.0 / 1024.0) / minsec;
+
+		// use hashsum in a fake way so that it's not completely compiled away by the optimizer
+		printf("%15s: len %4i %8.0f MB/s\n", name, len, mbps + (hashsum & 7)*0.00001);
+	}
+}
+
+
 // ------------------------------------------------------------------------------------
 // Individual hash functions for use in the testing code above
 
 struct HasherXXH32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
-		return XXH32(s.data(), s.size(), 0x1234);
+		return XXH32(data, size, 0x1234);
 	}
 };
 
 struct HasherXXH64_32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
-		return (HashType)XXH64(s.data(), s.size(), 0x1234);
+		return (HashType)XXH64(data, size, 0x1234);
 	}
 };
 
 struct HasherXXH64
 {
 	typedef uint64_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
-		return XXH64(s.data(), s.size(), 0x1234);
+		return XXH64(data, size, 0x1234);
 	}
 };
 
 struct HasherSpookyV2_64
 {
 	typedef uint64_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
-		return SpookyHash::Hash64(s.data(), (int)s.size(), 0x1234);
+		return SpookyHash::Hash64(data, (int)size, 0x1234);
 	}
 };
 
 struct HasherMurmur2A
 {
 	typedef uint32_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
-		return MurmurHash2A(s.data(), (int)s.size(), 0x1234);
+		return MurmurHash2A(data, (int)size, 0x1234);
 	}
 };
 
 struct HasherMurmur3_32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
 		HashType res;
-		MurmurHash3_x86_32(s.data(), (int)s.size(), 0x1234, &res);
+		MurmurHash3_x86_32(data, (int)size, 0x1234, &res);
 		return res;
 	}
 };
@@ -231,19 +273,19 @@ struct HasherMurmur3_32
 struct HasherFNV
 {
 	typedef uint32_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
-		return FNVHash(s.c_str());
+		return FNVHash((const char*)data, (int)size);
 	}
 };
 
 struct HasherCRC32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
 		HashType res;
-		crc32(s.data(), (int)s.size(), 0x1234, &res);
+		crc32(data, (int)size, 0x1234, &res);
 		return res;
 	}
 };
@@ -251,9 +293,9 @@ struct HasherCRC32
 struct HasherBadHashFunctionWeUsedToHave
 {
 	typedef uint32_t HashType;
-	HashType operator()(const std::string& s) const
+	HashType operator()(const void* data, size_t size) const
 	{
-		return hash_cstring()(s.c_str());
+		return hash_cstring()((const char*)data, (int)size);
 	}
 };
 
@@ -261,29 +303,47 @@ struct HasherBadHashFunctionWeUsedToHave
 // ------------------------------------------------------------------------------------
 // Main program
 
+#define TEST_HASHES(TestFunction) \
+	TestFunction(HasherXXH32(), "xxHash32"); \
+	TestFunction(HasherXXH64_32(), "xxHash64-32"); \
+	TestFunction(HasherXXH64(), "xxHash64"); \
+	TestFunction(HasherSpookyV2_64(), "SpookyV2-64"); \
+	TestFunction(HasherMurmur2A(), "Murmur2A"); \
+	TestFunction(HasherMurmur3_32(), "Murmur3-32"); \
+	TestFunction(HasherCRC32(), "CRC32"); \
+	TestFunction(HasherFNV(), "FNV"); \
+	TestFunction(djb2_hash(), "djb2"); \
+	TestFunction(HasherBadHashFunctionWeUsedToHave(), "BadHash");
 
-static void DoTest(const char* filename)
+
+static void DoTestOnRealData(const char* filename)
 {
 	ReadWords(filename);
 	if (g_Words.empty())
 		return;
 	printf("Testing on %s: %i entries (%.1f MB size, avg length %.1f)\n", filename, (int)g_Words.size(), g_TotalSize / 1024.0 / 1024.0, double(g_TotalSize) / g_Words.size());
-	TestHash(HasherXXH32(), "xxHash32");
-	TestHash(HasherXXH64_32(), "xxHash64-32");
-	TestHash(HasherXXH64(), "xxHash64");
-	TestHash(HasherSpookyV2_64(), "SpookyV2-64");
-	TestHash(HasherMurmur2A(), "Murmur2A");
-	TestHash(HasherMurmur3_32(), "Murmur3-32");
-	TestHash(HasherCRC32(), "CRC32");
-	TestHash(HasherFNV(), "FNV");
-	TestHash(djb2_hash(), "djb2");
-	TestHash(HasherBadHashFunctionWeUsedToHave(), "BadHash");
+	TEST_HASHES(TestOnData);
+	g_Words.clear();
 }
+
+
+static void DoTestSyntheticData()
+{
+	const size_t kSize = 1024 * 1024 * 128;
+	g_SyntheticData.resize(kSize);
+	for (size_t i = 0; i < kSize; ++i)
+		g_SyntheticData[i] = i;
+	printf("Testing on synthetic data\n");
+	TEST_HASHES(TestHashPerformance);
+	g_SyntheticData.clear();
+}
+
 
 int main()
 {
-	DoTest("test-words.txt");
-	DoTest("test-filenames.txt");
-	DoTest("test-code.txt");
+	DoTestOnRealData("test-words.txt");
+	DoTestOnRealData("test-filenames.txt");
+	DoTestOnRealData("test-code.txt");
+	//DoTestSyntheticData();
 	return 0;
 }

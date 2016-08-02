@@ -39,38 +39,38 @@ Testing on test-code.txt: 6069 entries (43.7 MB size, avg length 7546.6)
 **** MacBookPro late 2013 (Core i7-4850HQ 2.3GHz), Xcode 7.3.1 release 64 bit build:
 
 Testing on test-words.txt: 235886 entries (2.2 MB size, avg length 9.6)
-       xxHash32:      576 MB/s,     6 collis, 97.27% fill at 16bit
-    xxHash64-32:      582 MB/s,     7 collis, 97.29% fill at 16bit
-       xxHash64:      596 MB/s,     0 collis, 97.29% fill at 16bit
-    SpookyV2-64:      461 MB/s,     0 collis, 97.32% fill at 16bit
-       Murmur2A:      504 MB/s,    11 collis, 97.31% fill at 16bit
-     Murmur3-32:      570 MB/s,     3 collis, 97.24% fill at 16bit
-          CRC32:      536 MB/s,     5 collis, 97.30% fill at 16bit
-            FNV:      535 MB/s,     5 collis, 97.30% fill at 16bit
-           djb2:      529 MB/s,    10 collis, 97.21% fill at 16bit
-        BadHash:      333 MB/s,   998 collis, 67.17% fill at 16bit
+       xxHash32:      708 MB/s,     6 collis, 97.27% fill at 16bit
+    xxHash64-32:      615 MB/s,     7 collis, 97.29% fill at 16bit
+       xxHash64:      600 MB/s,     0 collis, 97.29% fill at 16bit
+    SpookyV2-64:      599 MB/s,     0 collis, 97.32% fill at 16bit
+       Murmur2A:      692 MB/s,    11 collis, 97.31% fill at 16bit
+     Murmur3-32:      677 MB/s,     3 collis, 97.24% fill at 16bit
+          CRC32:      591 MB/s,     5 collis, 97.30% fill at 16bit
+            FNV:      745 MB/s,     5 collis, 97.30% fill at 16bit
+           djb2:      775 MB/s,    10 collis, 97.21% fill at 16bit
+        BadHash:      794 MB/s,   998 collis, 67.17% fill at 16bit
 Testing on test-filenames.txt: 80297 entries (4.3 MB size, avg length 56.4)
-       xxHash32:     2354 MB/s,     0 collis, 70.58% fill at 16bit
-    xxHash64-32:     2250 MB/s,     0 collis, 70.69% fill at 16bit
-       xxHash64:     2188 MB/s,     0 collis, 70.69% fill at 16bit
-    SpookyV2-64:     1954 MB/s,     0 collis, 70.60% fill at 16bit
-       Murmur2A:     1843 MB/s,     0 collis, 70.54% fill at 16bit
-     Murmur3-32:     1961 MB/s,     1 collis, 70.37% fill at 16bit
-          CRC32:      517 MB/s,     2 collis, 70.94% fill at 16bit
-            FNV:      876 MB/s,     1 collis, 70.72% fill at 16bit
-           djb2:      942 MB/s,     1 collis, 70.52% fill at 16bit
-        BadHash:      463 MB/s,   842 collis, 37.09% fill at 16bit
+       xxHash32:     2530 MB/s,     0 collis, 70.58% fill at 16bit
+    xxHash64-32:     2444 MB/s,     0 collis, 70.69% fill at 16bit
+       xxHash64:     2406 MB/s,     0 collis, 70.69% fill at 16bit
+    SpookyV2-64:     2295 MB/s,     0 collis, 70.60% fill at 16bit
+       Murmur2A:     2312 MB/s,     0 collis, 70.54% fill at 16bit
+     Murmur3-32:     1851 MB/s,     1 collis, 70.37% fill at 16bit
+          CRC32:      527 MB/s,     2 collis, 70.94% fill at 16bit
+            FNV:     1109 MB/s,     1 collis, 70.72% fill at 16bit
+           djb2:     1126 MB/s,     1 collis, 70.52% fill at 16bit
+        BadHash:     1637 MB/s,   842 collis, 37.09% fill at 16bit
 Testing on test-code.txt: 6069 entries (43.7 MB size, avg length 7546.6)
-       xxHash32:     6375 MB/s,     0 collis,  8.84% fill at 16bit
-    xxHash64-32:    11513 MB/s,     0 collis,  8.83% fill at 16bit
-       xxHash64:    11783 MB/s,     0 collis,  8.83% fill at 16bit
-    SpookyV2-64:    11339 MB/s,     0 collis,  8.83% fill at 16bit
-       Murmur2A:     3256 MB/s,     0 collis,  8.85% fill at 16bit
-     Murmur3-32:     2617 MB/s,     0 collis,  8.87% fill at 16bit
-          CRC32:      455 MB/s,     0 collis,  8.82% fill at 16bit
-            FNV:      817 MB/s,     0 collis,  8.80% fill at 16bit
-           djb2:      784 MB/s,     0 collis,  8.85% fill at 16bit
-        BadHash:      499 MB/s,     0 collis,  5.24% fill at 16bit
+       xxHash32:     6357 MB/s,     0 collis,  8.84% fill at 16bit
+    xxHash64-32:    11704 MB/s,     0 collis,  8.83% fill at 16bit
+       xxHash64:    11516 MB/s,     0 collis,  8.83% fill at 16bit
+    SpookyV2-64:    11237 MB/s,     0 collis,  8.83% fill at 16bit
+       Murmur2A:     3290 MB/s,     0 collis,  8.85% fill at 16bit
+     Murmur3-32:     2596 MB/s,     0 collis,  8.87% fill at 16bit
+          CRC32:      449 MB/s,     0 collis,  8.82% fill at 16bit
+            FNV:      691 MB/s,     0 collis,  8.80% fill at 16bit
+           djb2:      809 MB/s,     0 collis,  8.85% fill at 16bit
+        BadHash:     3196 MB/s,     0 collis,  5.24% fill at 16bit
 
 ------------------------------------------------------------------
 **** asm.js on MBP late 2013, emscripten 1.36, Firefox 47:
@@ -144,3 +144,187 @@ Testing on test-code.txt: 6069 entries (43.7 MB size, avg length 7546.6)
             FNV:      804 MB/s,     0 collis,  8.80% fill at 16bit
            djb2:      796 MB/s,     0 collis,  8.85% fill at 16bit
         BadHash:     1556 MB/s,     0 collis,  5.24% fill at 16bit
+
+
+Throughput on MBP;
+Testing on synthetic data
+       xxHash32: len    2      428 MB/s
+       xxHash32: len    4      981 MB/s
+       xxHash32: len    7     1190 MB/s
+       xxHash32: len   11     1530 MB/s
+       xxHash32: len   17     2215 MB/s
+       xxHash32: len   26     2570 MB/s
+       xxHash32: len   39     3163 MB/s
+       xxHash32: len   58     3816 MB/s
+       xxHash32: len   86     4495 MB/s
+       xxHash32: len  128     5231 MB/s
+       xxHash32: len  191     5268 MB/s
+       xxHash32: len  285     5708 MB/s
+       xxHash32: len  426     5977 MB/s
+       xxHash32: len  637     5847 MB/s
+       xxHash32: len  953     6028 MB/s
+       xxHash32: len 1427     6244 MB/s
+       xxHash32: len 2138     6295 MB/s
+       xxHash32: len 3204     6394 MB/s
+    xxHash64-32: len    2      273 MB/s
+    xxHash64-32: len    4      656 MB/s
+    xxHash64-32: len    7      799 MB/s
+    xxHash64-32: len   11     1240 MB/s
+    xxHash64-32: len   17     1879 MB/s
+    xxHash64-32: len   26     2247 MB/s
+    xxHash64-32: len   39     2054 MB/s
+    xxHash64-32: len   58     2515 MB/s
+    xxHash64-32: len   86     3520 MB/s
+    xxHash64-32: len  128     5542 MB/s
+    xxHash64-32: len  191     5901 MB/s
+    xxHash64-32: len  285     6595 MB/s
+    xxHash64-32: len  426     8188 MB/s
+    xxHash64-32: len  637     8585 MB/s
+    xxHash64-32: len  953    10308 MB/s
+    xxHash64-32: len 1427    10439 MB/s
+    xxHash64-32: len 2138    11001 MB/s
+    xxHash64-32: len 3204    11471 MB/s
+       xxHash64: len    2      278 MB/s
+       xxHash64: len    4      658 MB/s
+       xxHash64: len    7      821 MB/s
+       xxHash64: len   11     1241 MB/s
+       xxHash64: len   17     1909 MB/s
+       xxHash64: len   26     2406 MB/s
+       xxHash64: len   39     2233 MB/s
+       xxHash64: len   58     2819 MB/s
+       xxHash64: len   86     3778 MB/s
+       xxHash64: len  128     6090 MB/s
+       xxHash64: len  191     5960 MB/s
+       xxHash64: len  285     7583 MB/s
+       xxHash64: len  426     9202 MB/s
+       xxHash64: len  637     8110 MB/s
+       xxHash64: len  953     9592 MB/s
+       xxHash64: len 1427    10521 MB/s
+       xxHash64: len 2138    11003 MB/s
+       xxHash64: len 3204    11467 MB/s
+    SpookyV2-64: len    2      212 MB/s
+    SpookyV2-64: len    4      431 MB/s
+    SpookyV2-64: len    7      683 MB/s
+    SpookyV2-64: len   11     1111 MB/s
+    SpookyV2-64: len   17     1010 MB/s
+    SpookyV2-64: len   26     1532 MB/s
+    SpookyV2-64: len   39     2298 MB/s
+    SpookyV2-64: len   58     2359 MB/s
+    SpookyV2-64: len   86     2504 MB/s
+    SpookyV2-64: len  128     3222 MB/s
+    SpookyV2-64: len  191     3343 MB/s
+    SpookyV2-64: len  285     5191 MB/s
+    SpookyV2-64: len  426     5941 MB/s
+    SpookyV2-64: len  637     7193 MB/s
+    SpookyV2-64: len  953     7921 MB/s
+    SpookyV2-64: len 1427     7160 MB/s
+    SpookyV2-64: len 2138     9984 MB/s
+    SpookyV2-64: len 3204    10390 MB/s
+       Murmur2A: len    2      588 MB/s
+       Murmur2A: len    4      744 MB/s
+       Murmur2A: len    7     1185 MB/s
+       Murmur2A: len   11     1532 MB/s
+       Murmur2A: len   17     1898 MB/s
+       Murmur2A: len   26     2132 MB/s
+       Murmur2A: len   39     2391 MB/s
+       Murmur2A: len   58     2701 MB/s
+       Murmur2A: len   86     2862 MB/s
+       Murmur2A: len  128     2898 MB/s
+       Murmur2A: len  191     2927 MB/s
+       Murmur2A: len  285     3231 MB/s
+       Murmur2A: len  426     3240 MB/s
+       Murmur2A: len  637     3253 MB/s
+       Murmur2A: len  953     3246 MB/s
+       Murmur2A: len 1427     3138 MB/s
+       Murmur2A: len 2138     3216 MB/s
+       Murmur2A: len 3204     3025 MB/s
+     Murmur3-32: len    2      384 MB/s
+     Murmur3-32: len    4      632 MB/s
+     Murmur3-32: len    7      952 MB/s
+     Murmur3-32: len   11     1272 MB/s
+     Murmur3-32: len   17     1543 MB/s
+     Murmur3-32: len   26     1908 MB/s
+     Murmur3-32: len   39     2077 MB/s
+     Murmur3-32: len   58     2344 MB/s
+     Murmur3-32: len   86     2462 MB/s
+     Murmur3-32: len  128     2166 MB/s
+     Murmur3-32: len  191     2535 MB/s
+     Murmur3-32: len  285     2550 MB/s
+     Murmur3-32: len  426     2566 MB/s
+     Murmur3-32: len  637     2564 MB/s
+     Murmur3-32: len  953     2519 MB/s
+     Murmur3-32: len 1427     2569 MB/s
+     Murmur3-32: len 2138     2615 MB/s
+     Murmur3-32: len 3204     2569 MB/s
+          CRC32: len    2      520 MB/s
+          CRC32: len    4      745 MB/s
+          CRC32: len    7      819 MB/s
+          CRC32: len   11      800 MB/s
+          CRC32: len   17      717 MB/s
+          CRC32: len   26      635 MB/s
+          CRC32: len   39      566 MB/s
+          CRC32: len   58      528 MB/s
+          CRC32: len   86      502 MB/s
+          CRC32: len  128      482 MB/s
+          CRC32: len  191      398 MB/s
+          CRC32: len  285      467 MB/s
+          CRC32: len  426      460 MB/s
+          CRC32: len  637      462 MB/s
+          CRC32: len  953      457 MB/s
+          CRC32: len 1427      453 MB/s
+          CRC32: len 2138      453 MB/s
+          CRC32: len 3204      453 MB/s
+            FNV: len    2      811 MB/s
+            FNV: len    4     1154 MB/s
+            FNV: len    7     1382 MB/s
+            FNV: len   11     1373 MB/s
+            FNV: len   17     1395 MB/s
+            FNV: len   26     1198 MB/s
+            FNV: len   39     1187 MB/s
+            FNV: len   58     1095 MB/s
+            FNV: len   86      992 MB/s
+            FNV: len  128      905 MB/s
+            FNV: len  191      884 MB/s
+            FNV: len  285      859 MB/s
+            FNV: len  426      842 MB/s
+            FNV: len  637      822 MB/s
+            FNV: len  953      827 MB/s
+            FNV: len 1427      814 MB/s
+            FNV: len 2138      816 MB/s
+            FNV: len 3204      802 MB/s
+           djb2: len    2     1176 MB/s
+           djb2: len    4     1614 MB/s
+           djb2: len    7     1418 MB/s
+           djb2: len   11     1484 MB/s
+           djb2: len   17     1544 MB/s
+           djb2: len   26     1373 MB/s
+           djb2: len   39     1284 MB/s
+           djb2: len   58     1127 MB/s
+           djb2: len   86      998 MB/s
+           djb2: len  128      929 MB/s
+           djb2: len  191      896 MB/s
+           djb2: len  285      868 MB/s
+           djb2: len  426      846 MB/s
+           djb2: len  637      840 MB/s
+           djb2: len  953      820 MB/s
+           djb2: len 1427      826 MB/s
+           djb2: len 2138      822 MB/s
+           djb2: len 3204      813 MB/s
+        BadHash: len    2     1172 MB/s
+        BadHash: len    4     1826 MB/s
+        BadHash: len    7     1401 MB/s
+        BadHash: len   11     1489 MB/s
+        BadHash: len   17     1522 MB/s
+        BadHash: len   26     1567 MB/s
+        BadHash: len   39     1599 MB/s
+        BadHash: len   58     1546 MB/s
+        BadHash: len   86     1843 MB/s
+        BadHash: len  128     2082 MB/s
+        BadHash: len  191     2282 MB/s
+        BadHash: len  285     2505 MB/s
+        BadHash: len  426     2571 MB/s
+        BadHash: len  637     2692 MB/s
+        BadHash: len  953     2810 MB/s
+        BadHash: len 1427     2741 MB/s
+        BadHash: len 2138     2929 MB/s
+        BadHash: len 3204     3086 MB/s

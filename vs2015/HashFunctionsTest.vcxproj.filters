@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\crc.cpp" />
-    <ClCompile Include="..\FNVHash.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\MurmurHash2.cpp" />
     <ClCompile Include="..\MurmurHash3.cpp" />
