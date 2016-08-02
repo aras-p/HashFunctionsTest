@@ -30,3 +30,34 @@ Testing on test-code.txt: 6069 words (43.7 MB size, avg len 7546.6)
            DJB2:    780.0 MB/s,     0 collis,  8.85% fill at 16bit
         CString:    520.0 MB/s,     0 collis,  5.24% fill at 16bit
 
+MBP:
+Testing on test-words.txt: 235886 words (2.2 MB size, avg len 9.6)
+       xxHash32:    538.6 MB/s,     6 collis, 97.27% fill at 16bit
+    xxHash64-32:    545.3 MB/s,     7 collis, 97.29% fill at 16bit
+       xxHash64:    552.7 MB/s,     0 collis, 97.29% fill at 16bit
+       Murmur2A:    380.8 MB/s,    11 collis, 97.31% fill at 16bit
+     Murmur3-32:    580.4 MB/s,     3 collis, 97.24% fill at 16bit
+          CRC32:    528.0 MB/s,     5 collis, 97.30% fill at 16bit
+            FNV:    536.7 MB/s,     5 collis, 97.29% fill at 16bit
+           DJB2:    512.3 MB/s,    10 collis, 97.21% fill at 16bit
+        CString:    328.5 MB/s,   998 collis, 67.16% fill at 16bit
+Testing on test-filenames.txt: 80297 words (4.3 MB size, avg len 56.4)
+       xxHash32:   1927.4 MB/s,     0 collis, 70.58% fill at 16bit
+    xxHash64-32:   2198.1 MB/s,     0 collis, 70.69% fill at 16bit
+       xxHash64:   2219.6 MB/s,     0 collis, 70.69% fill at 16bit
+       Murmur2A:   1834.9 MB/s,     0 collis, 70.54% fill at 16bit
+     Murmur3-32:   1978.6 MB/s,     1 collis, 70.37% fill at 16bit
+          CRC32:    424.2 MB/s,     2 collis, 70.94% fill at 16bit
+            FNV:    904.9 MB/s,     1 collis, 70.72% fill at 16bit
+           DJB2:    921.9 MB/s,     1 collis, 70.52% fill at 16bit
+        CString:    464.5 MB/s,   842 collis, 37.08% fill at 16bit
+Testing on test-code.txt: 6069 words (43.7 MB size, avg len 7546.6)
+       xxHash32:   5892.2 MB/s,     0 collis,  8.84% fill at 16bit
+    xxHash64-32:  11449.2 MB/s,     0 collis,  8.83% fill at 16bit
+       xxHash64:  11503.5 MB/s,     0 collis,  8.83% fill at 16bit
+       Murmur2A:   3205.3 MB/s,     0 collis,  8.85% fill at 16bit
+     Murmur3-32:   2053.4 MB/s,     0 collis,  8.87% fill at 16bit
+          CRC32:    431.6 MB/s,     0 collis,  8.82% fill at 16bit
+            FNV:    800.6 MB/s,     0 collis,  8.80% fill at 16bit
+           DJB2:    798.7 MB/s,     0 collis,  8.85% fill at 16bit
+        CString:    471.8 MB/s,     0 collis,  5.24% fill at 16bit

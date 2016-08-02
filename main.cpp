@@ -12,7 +12,55 @@
 #include <string>
 #include <set>
 #include <stdio.h>
-#include <time.h>
+
+#ifdef __APPLE__
+#include <sys/time.h>
+#endif
+
+#ifdef _MSC_VER
+static LARGE_INTEGER s_Time0;
+#else
+static timeval s_Time0;
+#endif
+
+
+static void TimerBegin()
+{
+	#ifdef _MSC_VER
+	QueryPerformanceCounter (&s_Time0);
+	#else
+	gettimeofday(&s_Time0, NULL);
+	#endif
+}
+
+
+static float TimerEnd()
+{
+	#ifdef _MSC_VER
+
+	static bool timerInited = false;
+	static LARGE_INTEGER ticksPerSec;
+	if (!timerInited) {
+		QueryPerformanceFrequency(&ticksPerSec);
+		timerInited = true;
+	}
+	LARGE_INTEGER ttt1;
+	QueryPerformanceCounter (&ttt1);
+	float timeTaken = float(double(ttt1.QuadPart-s_Time0.QuadPart) / double(ticksPerSec.QuadPart));
+
+	#else
+
+	timeval ttt1;
+	gettimeofday( &ttt1, NULL );
+	timeval ttt2;
+	timersub( &ttt1, &s_Time0, &ttt2 );
+	float timeTaken = ttt2.tv_sec + ttt2.tv_usec * 1.0e-6f;
+
+	#endif
+
+	return timeTaken;
+}
+
 
 extern void crc32 (const void * key, int len, uint32_t seed, void * out);
 
@@ -72,13 +120,12 @@ template<typename HashType, typename Hasher>
 void TestHash(const Hasher& hasher, Results& outResults)
 {
 	HashType hashsum = 0x1234;
-	clock_t t1 = clock();
+	TimerBegin();
 	for (size_t i = 0, n = g_Words.size(); i != n; ++i)
 	{
 		hashsum ^= hasher(g_Words[i]);
 	}
-	clock_t t2 = clock();
-	double sec = double(t2-t1) / CLOCKS_PER_SEC;
+	float sec = TimerEnd();
 	outResults.mbps = (g_TotalSize / 1024.0 / 1024.0) / sec;
 
 	std::set<HashType> uniq;
