@@ -15,6 +15,7 @@
 
 
 #ifdef _MSC_VER
+	#include <Windows.h>
 	static LARGE_INTEGER s_Time0;
 	static void TimerBegin()
 	{
