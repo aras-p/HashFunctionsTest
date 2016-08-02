@@ -1,8 +1,9 @@
 #ifndef CSTRINGHASH_H
 #define CSTRINGHASH_H
-#include <functional>
 
-struct hash_cstring : std::unary_function<const char*, std::size_t>
+// Hash function we had, from some super old code. Was not used much, but a few places did use it.
+// It's a bad hash function! Do not do things like this.
+struct hash_cstring
 {
 	unsigned operator ()(const char* key) const
 	{
@@ -12,7 +13,7 @@ struct hash_cstring : std::unary_function<const char*, std::size_t>
 		while (*key != '\0')
 		{
 			h = (h << 4) + *key;
-			std::size_t g = h & mask;
+			unsigned g = h & mask;
 			h ^= g | (g >> sr);
 			key++;
 		}

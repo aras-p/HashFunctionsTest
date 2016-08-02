@@ -14,6 +14,12 @@
 #include <stdio.h>
 
 
+extern void crc32 (const void * key, int len, uint32_t seed, void * out);
+
+
+// ------------------------------------------------------------------------------------
+// Timer code
+
 #ifdef _MSC_VER
 	#include <Windows.h>
 	static LARGE_INTEGER s_Time0;
@@ -71,7 +77,8 @@
 
 
 
-extern void crc32 (const void * key, int len, uint32_t seed, void * out);
+// ------------------------------------------------------------------------------------
+// Data sets & reading them from file
 
 
 typedef std::vector<std::string> WordList;
@@ -117,43 +124,58 @@ static void ReadWords(const char* filename)
 	fclose(f);
 }
 
-struct Results
-{
-	double mbps;
-	size_t collisions;
-	size_t unique16bit;
-	unsigned hashsum;
-};
 
-template<typename HashType, typename Hasher>
-void TestHash(const Hasher& hasher, Results& outResults)
+// ------------------------------------------------------------------------------------
+// Hash function testing code
+
+
+template<typename Hasher>
+void TestHash(const Hasher& hasher, const char* name)
 {
-	HashType hashsum = 0x1234;
-	TimerBegin();
-	for (size_t i = 0, n = g_Words.size(); i != n; ++i)
+	// hash all the entries; do several iterations and pick smallest time
+	typename Hasher::HashType hashsum = 0x1234;
+	float minsec = 1.0e6f;
+	for (int iterations = 0; iterations < 5; ++iterations)
 	{
-		hashsum ^= hasher(g_Words[i]);
+		TimerBegin();
+		for (size_t i = 0, n = g_Words.size(); i != n; ++i)
+		{
+			hashsum ^= hasher(g_Words[i]);
+		}
+		float sec = TimerEnd();
+		if (sec < minsec)
+			minsec = sec;
 	}
-	float sec = TimerEnd();
-	outResults.mbps = (g_TotalSize / 1024.0 / 1024.0) / sec;
+	// MB/s
+	double mbps = (g_TotalSize / 1024.0 / 1024.0) / minsec;
 
-	std::set<HashType> uniq;
-	std::set<HashType> uniq16;
+	// test for "hash quality":
+	// unique hashes found in all the entries (#entries - uniq == how many collisions found)
+	std::set<typename Hasher::HashType> uniq;
+	// unique hashes found in lowest 16 bits of the computed hash. Ideally this spreads evenly,
+	// and for # of entries larger than 64k would approach 64k entries in the low bits.
+	std::set<typename Hasher::HashType> uniq16;
 	for (size_t i = 0, n = g_Words.size(); i != n; ++i)
 	{
-		HashType h = hasher(g_Words[i]);
+		typename Hasher::HashType h = hasher(g_Words[i]);
 		uniq.insert(h);
 		uniq16.insert(h & 0xFFFF);
 	}
-	outResults.collisions = g_Words.size() - uniq.size();
-	outResults.unique16bit = uniq16.size();
-	outResults.hashsum = (unsigned)hashsum;
+	size_t collisions = g_Words.size() - uniq.size();
+	double fillOf16bit = uniq16.size() / 65536.0 * 100.0;
+
+	// use hashsum in a fake way so that it's not completely compiled away by the optimizer
+	printf("%15s: %8.0f MB/s, %5i collis, %5.2f%% fill at 16bit\n", name, mbps, (int)collisions, fillOf16bit + (hashsum & 0x7) * 0.0001);
 }
 
 
+// ------------------------------------------------------------------------------------
+// Individual hash functions for use in the testing code above
+
 struct HasherXXH32
 {
-	uint32_t operator()(const std::string& s) const
+	typedef uint32_t HashType;
+	HashType operator()(const std::string& s) const
 	{
 		return XXH32(s.data(), s.size(), 0x1234);
 	}
@@ -161,23 +183,35 @@ struct HasherXXH32
 
 struct HasherXXH64_32
 {
-	uint32_t operator()(const std::string& s) const
+	typedef uint32_t HashType;
+	HashType operator()(const std::string& s) const
 	{
-		return (uint32_t)XXH64(s.data(), s.size(), 0x1234);
+		return (HashType)XXH64(s.data(), s.size(), 0x1234);
 	}
 };
 
 struct HasherXXH64
 {
-	uint64_t operator()(const std::string& s) const
+	typedef uint64_t HashType;
+	HashType operator()(const std::string& s) const
 	{
 		return XXH64(s.data(), s.size(), 0x1234);
 	}
 };
 
+struct HasherSpookyV2_64
+{
+	typedef uint64_t HashType;
+	HashType operator()(const std::string& s) const
+	{
+		return SpookyHash::Hash64(s.data(), (int)s.size(), 0x1234);
+	}
+};
+
 struct HasherMurmur2A
 {
-	uint32_t operator()(const std::string& s) const
+	typedef uint32_t HashType;
+	HashType operator()(const std::string& s) const
 	{
 		return MurmurHash2A(s.data(), (int)s.size(), 0x1234);
 	}
@@ -185,18 +219,19 @@ struct HasherMurmur2A
 
 struct HasherMurmur3_32
 {
-	uint32_t operator()(const std::string& s) const
+	typedef uint32_t HashType;
+	HashType operator()(const std::string& s) const
 	{
-		uint32_t res;
+		HashType res;
 		MurmurHash3_x86_32(s.data(), (int)s.size(), 0x1234, &res);
 		return res;
 	}
 };
 
-
 struct HasherFNV
 {
-	uint32_t operator()(const std::string& s) const
+	typedef uint32_t HashType;
+	HashType operator()(const std::string& s) const
 	{
 		return FNVHash(s.c_str());
 	}
@@ -204,51 +239,45 @@ struct HasherFNV
 
 struct HasherCRC32
 {
-	uint32_t operator()(const std::string& s) const
+	typedef uint32_t HashType;
+	HashType operator()(const std::string& s) const
 	{
-		uint32_t res;
+		HashType res;
 		crc32(s.data(), (int)s.size(), 0x1234, &res);
 		return res;
 	}
 };
 
-struct HasherCString
+struct HasherBadHashFunctionWeUsedToHave
 {
-	uint32_t operator()(const std::string& s) const
+	typedef uint32_t HashType;
+	HashType operator()(const std::string& s) const
 	{
 		return hash_cstring()(s.c_str());
 	}
 };
 
-static void PrintResults(const char* name, const Results& res)
-{
-	printf("%15s: %8.1f MB/s, %5i collis, %5.2f%% fill at 16bit\n", name, res.mbps, (int)res.collisions, res.unique16bit / 65536.0 * 100.0);
-}
+
+// ------------------------------------------------------------------------------------
+// Main program
+
 
 static void DoTest(const char* filename)
 {
 	ReadWords(filename);
 	if (g_Words.empty())
 		return;
-	printf("Testing on %s: %i words (%.1f MB size, avg len %.1f)\n", filename, (int)g_Words.size(), g_TotalSize / 1024.0 / 1024.0, double(g_TotalSize) / g_Words.size());
-	Results resXXH32; TestHash<uint32_t, HasherXXH32>(HasherXXH32(), resXXH32);
-	Results resXXH64_32; TestHash<uint32_t, HasherXXH64_32>(HasherXXH64_32(), resXXH64_32);
-	Results resXXH64; TestHash<uint64_t, HasherXXH64>(HasherXXH64(), resXXH64);
-	Results resMurmur2A; TestHash<uint32_t, HasherMurmur2A>(HasherMurmur2A(), resMurmur2A);
-	Results resMurmur3_32; TestHash<uint32_t, HasherMurmur3_32>(HasherMurmur3_32(), resMurmur3_32);
-	Results resCRC32; TestHash<uint32_t, HasherCRC32>(HasherCRC32(), resCRC32);
-	Results resFNV; TestHash<uint32_t, HasherFNV>(HasherFNV(), resFNV);
-	Results resDJB; TestHash<uint32_t, djb2_hash>(djb2_hash(), resDJB);
-	Results resCString; TestHash<uint32_t, HasherCString>(HasherCString(), resCString);
-	PrintResults("xxHash32", resXXH32);
-	PrintResults("xxHash64-32", resXXH64_32);
-	PrintResults("xxHash64", resXXH64);
-	PrintResults("Murmur2A", resMurmur2A);
-	PrintResults("Murmur3-32", resMurmur3_32);
-	PrintResults("CRC32", resCRC32);
-	PrintResults("FNV", resFNV);
-	PrintResults("DJB2", resDJB);
-	PrintResults("CString", resCString);
+	printf("Testing on %s: %i entries (%.1f MB size, avg length %.1f)\n", filename, (int)g_Words.size(), g_TotalSize / 1024.0 / 1024.0, double(g_TotalSize) / g_Words.size());
+	TestHash(HasherXXH32(), "xxHash32");
+	TestHash(HasherXXH64_32(), "xxHash64-32");
+	TestHash(HasherXXH64(), "xxHash64");
+	TestHash(HasherSpookyV2_64(), "SpookyV2-64");
+	TestHash(HasherMurmur2A(), "Murmur2A");
+	TestHash(HasherMurmur3_32(), "Murmur3-32");
+	TestHash(HasherCRC32(), "CRC32");
+	TestHash(HasherFNV(), "FNV");
+	TestHash(djb2_hash(), "djb2");
+	TestHash(HasherBadHashFunctionWeUsedToHave(), "BadHash");
 }
 
 int main()

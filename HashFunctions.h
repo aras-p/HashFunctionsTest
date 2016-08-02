@@ -10,6 +10,7 @@
 template<typename T>
 struct djb2_hash_t
 {
+	typedef unsigned int HashType;
 	inline unsigned int operator()(const T& str) const
 	{
 		unsigned int hash = 5381;
