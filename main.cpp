@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "xxhash.h"
 #include "MurmurHash2.h"
 #include "MurmurHash3.h"
@@ -23,7 +25,7 @@ static size_t g_TotalSize;
 static void ReadWords(const char* filename)
 {
 	g_Words.clear();
-	FILE* f = fopen(filename, "rt");
+	FILE* f = fopen(filename, "rb");
 	if (!f)
 	{
 		printf("error: can't open dictionary file '%s'\n", filename);
@@ -44,6 +46,9 @@ static void ReadWords(const char* filename)
 		{
 			std::string word;
 			word.assign(buffer+wordStart, pos-wordStart);
+			// remove any trailing windows newlines
+			while (!word.empty() && word[word.size()-1] == '\r')
+				word.pop_back();
 			g_Words.push_back(word);
 			g_TotalSize += word.size();
 			wordStart = pos+1;
@@ -167,6 +172,8 @@ static void PrintResults(const char* name, const Results& res)
 static void DoTest(const char* filename)
 {
 	ReadWords(filename);
+	if (g_Words.empty())
+		return;
 	printf("Testing on %s: %i words (%.1f MB size, avg len %.1f)\n", filename, (int)g_Words.size(), g_TotalSize / 1024.0 / 1024.0, double(g_TotalSize) / g_Words.size());
 	Results resXXH32; TestHash<uint32_t, HasherXXH32>(HasherXXH32(), resXXH32);
 	Results resXXH64_32; TestHash<uint32_t, HasherXXH64_32>(HasherXXH64_32(), resXXH64_32);
