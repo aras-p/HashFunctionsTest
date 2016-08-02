@@ -4,3 +4,5 @@ vs2015/build
 *.VC.opendb
 *.sdf
 *.vcxproj.user
+*.xcworkspace
+xcuserdata
