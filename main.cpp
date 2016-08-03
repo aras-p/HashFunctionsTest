@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <map>
 #include <stdio.h>
 
 
@@ -131,6 +132,17 @@ static void ReadWords(const char* filename)
 // ------------------------------------------------------------------------------------
 // Hash function testing code
 
+inline uint32_t NextPowerOfTwo(uint32_t v)
+{
+	v -= 1;
+	v |= v >> 16;
+	v |= v >> 8;
+	v |= v >> 4;
+	v |= v >> 2;
+	v |= v >> 1;
+	return v + 1;
+}
+
 
 template<typename Hasher>
 void TestOnData(const Hasher& hasher, const char* name)
@@ -156,21 +168,27 @@ void TestOnData(const Hasher& hasher, const char* name)
 	// test for "hash quality":
 	// unique hashes found in all the entries (#entries - uniq == how many collisions found)
 	std::set<typename Hasher::HashType> uniq;
-	// unique hashes found in lowest 16 bits of the computed hash. Ideally this spreads evenly,
-	// and for # of entries larger than 64k would approach 64k entries in the low bits.
-	std::set<typename Hasher::HashType> uniq16;
+	// unique buckets that we'd end up with, if we had a hashtable with a load factor of 0.8 that is
+	// always power of two size.
+	std::map<typename Hasher::HashType, int> uniqModulo;
+	size_t hashtableSize = NextPowerOfTwo(g_Words.size() / 0.8);
+	int maxBucket = 0;
 	for (size_t i = 0, n = g_Words.size(); i != n; ++i)
 	{
 		const std::string& s = g_Words[i];
 		typename Hasher::HashType h = hasher(s.data(), s.size());
 		uniq.insert(h);
-		uniq16.insert(h & 0xFFFF);
+		int bucketSize = uniqModulo[h % hashtableSize]++;
+		if (bucketSize > maxBucket)
+			maxBucket = bucketSize;
 	}
 	size_t collisions = g_Words.size() - uniq.size();
-	double fillOf16bit = uniq16.size() / 65536.0 * 100.0;
+	size_t collisionsHashtable = g_Words.size() - uniqModulo.size();
+	double avgBucket = (double)g_Words.size() / uniqModulo.size();
 
 	// use hashsum in a fake way so that it's not completely compiled away by the optimizer
-	printf("%15s: %8.0f MB/s, %5i collis, %5.2f%% fill at 16bit\n", name, mbps, (int)collisions, fillOf16bit + (hashsum & 0x7) * 0.0001);
+	mbps += (hashsum & 0x7) * 0.0001;
+	printf("%15s: %8.0f MB/s, %5i collis, %5i htcollis %i max %.3f avgbucket\n", name, mbps, (int)collisions, (int)collisionsHashtable, maxBucket, avgBucket);
 }
 
 
@@ -186,7 +204,7 @@ void TestHashPerformance(const Hasher& hasher, const char* name)
 		// do several iterations and pick smallest time
 		float minsec = 1.0e6f;
 		size_t totalBytes = 0;
-		for (int iterations = 0; iterations < 5; ++iterations)
+		for (int iterations = 0; iterations < 1; ++iterations)
 		{
 			
 			const char* dataPtr = g_SyntheticData.data();
@@ -329,7 +347,11 @@ static void DoTestOnRealData(const char* filename)
 
 static void DoTestSyntheticData()
 {
+#ifdef EMSCRIPTEN
+	const size_t kSize = 1024 * 1024 * 64;
+#else
 	const size_t kSize = 1024 * 1024 * 128;
+#endif
 	g_SyntheticData.resize(kSize);
 	for (size_t i = 0; i < kSize; ++i)
 		g_SyntheticData[i] = i;
