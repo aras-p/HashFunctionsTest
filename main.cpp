@@ -15,6 +15,8 @@
 #include <stdio.h>
 
 
+FILE* g_OutputFile = stdout;
+
 extern void crc32 (const void * key, int len, uint32_t seed, void * out);
 
 
@@ -90,14 +92,13 @@ static size_t g_TotalSize;
 
 static std::string g_SyntheticData;
 
-
 static void ReadWords(const char* filename)
 {
 	g_Words.clear();
 	FILE* f = fopen(filename, "rb");
 	if (!f)
 	{
-		printf("error: can't open dictionary file '%s'\n", filename);
+		fprintf(g_OutputFile, "error: can't open dictionary file '%s'\n", filename);
 		return;
 	}
 	fseek(f, 0, SEEK_END);
@@ -189,7 +190,7 @@ void TestOnData(const Hasher& hasher, const char* name)
 
 	// use hashsum in a fake way so that it's not completely compiled away by the optimizer
 	mbps += (hashsum & 0x7) * 0.0001;
-	printf("%15s: %8.0f MB/s, %5i collis, %5i htcollis %i max %.3f avgbucket\n", name, mbps, (int)collisions, (int)collisionsHashtable, maxBucket, avgBucket);
+	fprintf(g_OutputFile, "%15s: %8.0f MB/s, %5i collis, %5i htcollis %i max %.3f avgbucket\n", name, mbps, (int)collisions, (int)collisionsHashtable, maxBucket, avgBucket);
 }
 
 
@@ -207,7 +208,6 @@ void TestHashPerformance(const Hasher& hasher, const char* name)
 		size_t totalBytes = 0;
 		for (int iterations = 0; iterations < 1; ++iterations)
 		{
-			
 			const char* dataPtr = g_SyntheticData.data();
 			TimerBegin();
 			size_t pos = 0;
@@ -225,7 +225,7 @@ void TestHashPerformance(const Hasher& hasher, const char* name)
 		double mbps = (totalBytes / 1024.0 / 1024.0) / minsec;
 
 		// use hashsum in a fake way so that it's not completely compiled away by the optimizer
-		printf("%15s: len %4i %8.0f MB/s\n", name, len, mbps + (hashsum & 7)*0.00001);
+		fprintf(g_OutputFile, "%15s: len %4i %8.0f MB/s\n", name, len, mbps + (hashsum & 7)*0.00001);
 	}
 }
 
@@ -342,7 +342,7 @@ static void DoTestOnRealData(const char* folderName, const char* filename)
 	ReadWords(fullPath.c_str());
 	if (g_Words.empty())
 		return;
-	printf("Testing on %s: %i entries (%.1f MB size, avg length %.1f)\n", filename, (int)g_Words.size(), g_TotalSize / 1024.0 / 1024.0, double(g_TotalSize) / g_Words.size());
+	fprintf(g_OutputFile, "Testing on %s: %i entries (%.1f MB size, avg length %.1f)\n", filename, (int)g_Words.size(), g_TotalSize / 1024.0 / 1024.0, double(g_TotalSize) / g_Words.size());
 	TEST_HASHES(TestOnData);
 	g_Words.clear();
 }
@@ -350,7 +350,7 @@ static void DoTestOnRealData(const char* folderName, const char* filename)
 
 static void DoTestSyntheticData()
 {
-#ifdef EMSCRIPTEN
+#if defined(EMSCRIPTEN) || defined(_XBOX_ONE)
 	const size_t kSize = 1024 * 1024 * 64;
 #else
 	const size_t kSize = 1024 * 1024 * 128;
@@ -358,7 +358,7 @@ static void DoTestSyntheticData()
 	g_SyntheticData.resize(kSize);
 	for (size_t i = 0; i < kSize; ++i)
 		g_SyntheticData[i] = i;
-	printf("Testing on synthetic data\n");
+	fprintf(g_OutputFile, "Testing on synthetic data\n");
 	TEST_HASHES(TestHashPerformance);
 	g_SyntheticData.clear();
 }
@@ -372,7 +372,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 }
 
 
-#if !TARGET_OS_IPHONE
+#if !TARGET_OS_IPHONE && !defined(_XBOX_ONE)
 int main()
 {
 	HashFunctionsTestEntryPoint("");

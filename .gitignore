@@ -1,9 +1,16 @@
 test-code.txt
+
 vs2015/build
 .vs
 *.VC.opendb
 *.sdf
 *.vcxproj.user
+
+xboxone/Durango
+xboxone/build
+xboxone/ipch
+
 *.xcworkspace
 xcuserdata
+
 emscripten.*
