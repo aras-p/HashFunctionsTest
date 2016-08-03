@@ -329,10 +329,10 @@ struct HasherBadHashFunctionWeUsedToHave
 	TestFunction(HasherSpookyV2_64(), "SpookyV2-64"); \
 	TestFunction(HasherMurmur2A(), "Murmur2A"); \
 	TestFunction(HasherMurmur3_32(), "Murmur3-32"); \
-	TestFunction(HasherCRC32(), "CRC32"); \
+	/*TestFunction(HasherCRC32(), "CRC32");*/ \
 	TestFunction(HasherFNV(), "FNV"); \
 	TestFunction(djb2_hash(), "djb2"); \
-	TestFunction(HasherBadHashFunctionWeUsedToHave(), "BadHash");
+	/*TestFunction(HasherBadHashFunctionWeUsedToHave(), "BadHash")*/;
 
 
 static void DoTestOnRealData(const char* folderName, const char* filename)
