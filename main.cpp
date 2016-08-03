@@ -43,6 +43,7 @@ extern void crc32 (const void * key, int len, uint32_t seed, void * out);
 	}
 
 #elif defined(__APPLE__)
+	#include <TargetConditionals.h>
 	#include <sys/time.h>
 	static timeval s_Time0;
 	static void TimerBegin()
@@ -334,9 +335,11 @@ struct HasherBadHashFunctionWeUsedToHave
 	TestFunction(HasherBadHashFunctionWeUsedToHave(), "BadHash");
 
 
-static void DoTestOnRealData(const char* filename)
+static void DoTestOnRealData(const char* folderName, const char* filename)
 {
-	ReadWords(filename);
+	std::string fullPath = std::string(folderName) + filename;
+
+	ReadWords(fullPath.c_str());
 	if (g_Words.empty())
 		return;
 	printf("Testing on %s: %i entries (%.1f MB size, avg length %.1f)\n", filename, (int)g_Words.size(), g_TotalSize / 1024.0 / 1024.0, double(g_TotalSize) / g_Words.size());
@@ -360,12 +363,20 @@ static void DoTestSyntheticData()
 	g_SyntheticData.clear();
 }
 
+extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
+{
+	//DoTestOnRealData(folderName, "test-words.txt");
+	//DoTestOnRealData(folderName, "test-filenames.txt");
+	//DoTestOnRealData(folderName, "test-code.txt");
+	DoTestSyntheticData();
+}
 
+
+#if !TARGET_OS_IPHONE
 int main()
 {
-	DoTestOnRealData("test-words.txt");
-	DoTestOnRealData("test-filenames.txt");
-	DoTestOnRealData("test-code.txt");
-	//DoTestSyntheticData();
+	HashFunctionsTestEntryPoint("");
 	return 0;
 }
+#endif
+
