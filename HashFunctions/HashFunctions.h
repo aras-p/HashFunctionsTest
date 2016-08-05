@@ -2,6 +2,7 @@
 #define __HASH_FUNCTIONS_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 // http://www.cse.yorku.ca/~oz/hash.html
 // Other hashes here: http://burtleburtle.net/bob/

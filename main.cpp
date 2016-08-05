@@ -1,12 +1,12 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "xxhash.h"
-#include "MurmurHash2.h"
-#include "MurmurHash3.h"
-#include "SpookyV2.h"
-#include "FNVHash.h"
-#include "CStringHash.h"
-#include "HashFunctions.h"
+#include "HashFunctions/CStringHash.h"
+#include "HashFunctions/FNVHash.h"
+#include "HashFunctions/HashFunctions.h"
+#include "HashFunctions/MurmurHash2.h"
+#include "HashFunctions/MurmurHash3.h"
+#include "HashFunctions/SpookyV2.h"
+#include "HashFunctions/xxhash.h"
 
 #include <vector>
 #include <string>
@@ -375,10 +375,10 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	//   related parts, to dump actually hashed data into a log file. Unlike the test sets above,
 	//   most of the data here is binary, and represents snapshots of some internal structs in
 	//   memory.
-	//DoTestOnRealData(folderName, "test-words.txt");
-	//DoTestOnRealData(folderName, "test-filenames.txt");
-	//DoTestOnRealData(folderName, "test-code.txt");
-	//DoTestOnRealData(folderName, "test-binary.bin");
+	//DoTestOnRealData(folderName, "TestData/test-words.txt");
+	//DoTestOnRealData(folderName, "TestData/test-filenames.txt");
+	//DoTestOnRealData(folderName, "TestData/test-code.txt");
+	//DoTestOnRealData(folderName, "TestData/test-binary.bin");
 	DoTestSyntheticData();
 }
 

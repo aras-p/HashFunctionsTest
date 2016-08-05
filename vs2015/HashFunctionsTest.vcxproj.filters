@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\crc.cpp" />
+    <ClCompile Include="..\HashFunctions\crc.cpp" />
     <ClCompile Include="..\main.cpp" />
-    <ClCompile Include="..\MurmurHash2.cpp" />
-    <ClCompile Include="..\MurmurHash3.cpp" />
-    <ClCompile Include="..\SpookyV2.cpp" />
-    <ClCompile Include="..\xxhash.c" />
+    <ClCompile Include="..\HashFunctions\MurmurHash2.cpp" />
+    <ClCompile Include="..\HashFunctions\MurmurHash3.cpp" />
+    <ClCompile Include="..\HashFunctions\SpookyV2.cpp" />
+    <ClCompile Include="..\HashFunctions\xxhash.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CStringHash.h" />
-    <ClInclude Include="..\FNVHash.h" />
-    <ClInclude Include="..\HashFunctions.h" />
-    <ClInclude Include="..\MurmurHash2.h" />
-    <ClInclude Include="..\MurmurHash3.h" />
-    <ClInclude Include="..\SpookyV2.h" />
-    <ClInclude Include="..\xxhash.h" />
+    <ClInclude Include="..\HashFunctions\CStringHash.h" />
+    <ClInclude Include="..\HashFunctions\FNVHash.h" />
+    <ClInclude Include="..\HashFunctions\HashFunctions.h" />
+    <ClInclude Include="..\HashFunctions\MurmurHash2.h" />
+    <ClInclude Include="..\HashFunctions\MurmurHash3.h" />
+    <ClInclude Include="..\HashFunctions\SpookyV2.h" />
+    <ClInclude Include="..\HashFunctions\xxhash.h" />
   </ItemGroup>
 </Project>
