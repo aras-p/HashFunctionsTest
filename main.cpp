@@ -1,5 +1,6 @@
 #include "PlatformWrap.h"
 
+#include "HashFunctions/mum.h"
 #include "HashFunctions/MurmurHash2.h"
 #include "HashFunctions/MurmurHash3.h"
 #include "HashFunctions/SimpleHashFunctions.h"
@@ -127,9 +128,17 @@ void TestOnData(const Hasher& hasher, const char* name)
 
 	// use hashsum in a fake way so that it's not completely compiled away by the optimizer
 	mbps += (hashsum & 0x7) * 0.0001;
-	fprintf(g_OutputFile, "%15s: %8.0f MB/s, %5i collis, %5i htcollis %i max %.3f avgbucket\n", name, mbps, (int)collisions, (int)collisionsHashtable, maxBucket, avgBucket);
+	fprintf(g_OutputFile, "%15s: %6.0f MB/s, %4i cols, %5i htcols %2i max %.3f avgbuckt\n", name, mbps, (int)collisions, (int)collisionsHashtable, maxBucket, avgBucket);
 }
 
+
+#if PLATFORM_WEBL || PLATFORM_XBOXONE || PLATFORM_PS4
+const size_t kSyntheticDataTotalSize = 1024 * 1024 * 64;
+const int kSyntheticDataIterations = 1;
+#else
+const size_t kSyntheticDataTotalSize = 1024 * 1024 * 128;
+const int kSyntheticDataIterations = 10;
+#endif
 
 template<typename Hasher>
 void TestHashPerformance(const Hasher& hasher, const char* name)
@@ -143,7 +152,7 @@ void TestHashPerformance(const Hasher& hasher, const char* name)
 		// do several iterations and pick smallest time
 		float minsec = 1.0e6f;
 		size_t totalBytes = 0;
-		for (int iterations = 0; iterations < 1; ++iterations)
+		for (int iterations = 0; iterations < kSyntheticDataIterations; ++iterations)
 		{
 			const char* dataPtr = g_SyntheticData.data();
 			TimerBegin();
@@ -226,6 +235,36 @@ struct HasherMurmur3_32
 	}
 };
 
+struct HasherMurmur3_x64_128
+{
+	typedef uint64_t HashType;
+	HashType operator()(const void* data, size_t size) const
+	{
+		HashType res[2];
+		MurmurHash3_x64_128(data, (int)size, 0x1234, &res);
+		return res[0];
+	}
+};
+
+struct HasherMum_32
+{
+	typedef uint32_t HashType;
+	HashType operator()(const void* data, size_t size) const
+	{
+		return (uint32_t)mum_hash(data, size, 0x1234);
+	}
+};
+
+struct HasherMum_64
+{
+	typedef uint64_t HashType;
+	HashType operator()(const void* data, size_t size) const
+	{
+		return mum_hash(data, size, 0x1234);
+	}
+};
+
+
 struct HasherCRC32
 {
 	typedef uint32_t HashType;
@@ -242,18 +281,24 @@ struct HasherCRC32
 // Main program
 
 #define TEST_HASHES(TestFunction) \
+	/* 32 bit hashes */ \
 	TestFunction(HasherXXH32(), "xxHash32"); \
 	TestFunction(HasherXXH64_32(), "xxHash64-32"); \
-	TestFunction(HasherXXH64(), "xxHash64"); \
-	TestFunction(HasherSpookyV2_64(), "SpookyV2-64"); \
 	TestFunction(HasherMurmur2A(), "Murmur2A"); \
 	TestFunction(HasherMurmur3_32(), "Murmur3-32"); \
-	TestFunction(HasherCRC32(), "CRC32"); \
+	TestFunction(HasherMum_32(), "Mum-32"); \
+	/*TestFunction(HasherCRC32(), "CRC32");*/ \
 	TestFunction(FNV1aHash(), "FNV-1a"); \
 	TestFunction(FNV1aModifiedHash(), "FNV-1aMod"); \
 	TestFunction(djb2_hash(), "djb2"); \
 	TestFunction(SDBM_hash(), "SDBM"); \
-	TestFunction(ELF_Like_Bad_Hash(), "ELFLikeBadHash");
+	TestFunction(ELF_Like_Bad_Hash(), "ELFLikeBadHash"); \
+	/* 64 bit hashes */ \
+	TestFunction(HasherXXH64(), "xxHash64"); \
+	TestFunction(HasherSpookyV2_64(), "SpookyV2-64"); \
+	TestFunction(HasherMurmur3_x64_128(), "Murmur3-X64-64"); \
+	TestFunction(HasherMum_64(), "Mum-64"); \
+	;
 
 
 static void DoTestOnRealData(const char* folderName, const char* filename)
@@ -271,13 +316,8 @@ static void DoTestOnRealData(const char* folderName, const char* filename)
 
 static void DoTestSyntheticData()
 {
-#if PLATFORM_WEBL || PLATFORM_XBOXONE || PLATFORM_PS4
-	const size_t kSize = 1024 * 1024 * 64;
-#else
-	const size_t kSize = 1024 * 1024 * 128;
-#endif
-	g_SyntheticData.resize(kSize);
-	for (size_t i = 0; i < kSize; ++i)
+	g_SyntheticData.resize(kSyntheticDataTotalSize);
+	for (size_t i = 0; i < kSyntheticDataTotalSize; ++i)
 		g_SyntheticData[i] = i;
 	fprintf(g_OutputFile, "Testing on synthetic data\n");
 	TEST_HASHES(TestHashPerformance);
@@ -296,11 +336,17 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	//   related parts, to dump actually hashed data into a log file. Unlike the test sets above,
 	//   most of the data here is binary, and represents snapshots of some internal structs in
 	//   memory.
-	//DoTestOnRealData(folderName, "TestData/test-words.txt");
-	//DoTestOnRealData(folderName, "TestData/test-filenames.txt");
-	//DoTestOnRealData(folderName, "TestData/test-code.txt");
-	//DoTestOnRealData(folderName, "TestData/test-binary.bin");
+#	if 0
+	DoTestOnRealData(folderName, "TestData/test-words.txt");
+	DoTestOnRealData(folderName, "TestData/test-filenames.txt");
+	DoTestOnRealData(folderName, "TestData/test-code.txt");
+	DoTestOnRealData(folderName, "TestData/test-binary.bin");
+#	endif
+
+	// Performance tests on synthetic data of various lengths
+#	if 1
 	DoTestSyntheticData();
+#	endif
 }
 
 

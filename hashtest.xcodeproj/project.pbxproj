@@ -71,6 +71,7 @@
 		2BC0EBA21D54A7390018BED6 /* test-words.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "test-words.txt"; path = "TestData/test-words.txt"; sourceTree = "<group>"; };
 		2BC0EBA71D54A93B0018BED6 /* PlatformWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWrap.h; sourceTree = "<group>"; };
 		2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleHashFunctions.h; path = HashFunctions/SimpleHashFunctions.h; sourceTree = "<group>"; };
+		2BC0EBAE1D54BA960018BED6 /* mum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mum.h; path = HashFunctions/mum.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +142,7 @@
 			children = (
 				2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */,
 				2BC0EB8D1D54A6F30018BED6 /* crc.cpp */,
+				2BC0EBAE1D54BA960018BED6 /* mum.h */,
 				2BC0EB911D54A6F30018BED6 /* MurmurHash2.cpp */,
 				2BC0EB921D54A6F30018BED6 /* MurmurHash2.h */,
 				2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */,
