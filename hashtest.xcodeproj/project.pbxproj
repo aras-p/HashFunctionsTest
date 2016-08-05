@@ -57,9 +57,6 @@
 		2BC0A39C1D51BFD20018BED6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2BC0A39E1D51BFD20018BED6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2BC0EB8D1D54A6F30018BED6 /* crc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = crc.cpp; path = HashFunctions/crc.cpp; sourceTree = "<group>"; };
-		2BC0EB8E1D54A6F30018BED6 /* CStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CStringHash.h; path = HashFunctions/CStringHash.h; sourceTree = "<group>"; };
-		2BC0EB8F1D54A6F30018BED6 /* FNVHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FNVHash.h; path = HashFunctions/FNVHash.h; sourceTree = "<group>"; };
-		2BC0EB901D54A6F30018BED6 /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HashFunctions.h; path = HashFunctions/HashFunctions.h; sourceTree = "<group>"; };
 		2BC0EB911D54A6F30018BED6 /* MurmurHash2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MurmurHash2.cpp; path = HashFunctions/MurmurHash2.cpp; sourceTree = "<group>"; };
 		2BC0EB921D54A6F30018BED6 /* MurmurHash2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MurmurHash2.h; path = HashFunctions/MurmurHash2.h; sourceTree = "<group>"; };
 		2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MurmurHash3.cpp; path = HashFunctions/MurmurHash3.cpp; sourceTree = "<group>"; };
@@ -73,6 +70,7 @@
 		2BC0EBA11D54A7390018BED6 /* test-filenames.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "test-filenames.txt"; path = "TestData/test-filenames.txt"; sourceTree = "<group>"; };
 		2BC0EBA21D54A7390018BED6 /* test-words.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "test-words.txt"; path = "TestData/test-words.txt"; sourceTree = "<group>"; };
 		2BC0EBA71D54A93B0018BED6 /* PlatformWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWrap.h; sourceTree = "<group>"; };
+		2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleHashFunctions.h; path = HashFunctions/SimpleHashFunctions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,10 +139,8 @@
 		2BC0EB8C1D54A6E40018BED6 /* HashFunctions */ = {
 			isa = PBXGroup;
 			children = (
+				2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */,
 				2BC0EB8D1D54A6F30018BED6 /* crc.cpp */,
-				2BC0EB8E1D54A6F30018BED6 /* CStringHash.h */,
-				2BC0EB8F1D54A6F30018BED6 /* FNVHash.h */,
-				2BC0EB901D54A6F30018BED6 /* HashFunctions.h */,
 				2BC0EB911D54A6F30018BED6 /* MurmurHash2.cpp */,
 				2BC0EB921D54A6F30018BED6 /* MurmurHash2.h */,
 				2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */,

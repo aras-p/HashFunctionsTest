@@ -1,10 +1,8 @@
 #include "PlatformWrap.h"
 
-#include "HashFunctions/CStringHash.h"
-#include "HashFunctions/FNVHash.h"
-#include "HashFunctions/HashFunctions.h"
 #include "HashFunctions/MurmurHash2.h"
 #include "HashFunctions/MurmurHash3.h"
+#include "HashFunctions/SimpleHashFunctions.h"
 #include "HashFunctions/SpookyV2.h"
 #include "HashFunctions/xxhash.h"
 
@@ -228,15 +226,6 @@ struct HasherMurmur3_32
 	}
 };
 
-struct HasherFNV
-{
-	typedef uint32_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return FNVHash((const char*)data, (int)size);
-	}
-};
-
 struct HasherCRC32
 {
 	typedef uint32_t HashType;
@@ -245,15 +234,6 @@ struct HasherCRC32
 		HashType res;
 		crc32(data, (int)size, 0x1234, &res);
 		return res;
-	}
-};
-
-struct HasherBadHashFunctionWeUsedToHave
-{
-	typedef uint32_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return hash_cstring()((const char*)data, (int)size);
 	}
 };
 
@@ -268,10 +248,12 @@ struct HasherBadHashFunctionWeUsedToHave
 	TestFunction(HasherSpookyV2_64(), "SpookyV2-64"); \
 	TestFunction(HasherMurmur2A(), "Murmur2A"); \
 	TestFunction(HasherMurmur3_32(), "Murmur3-32"); \
-	/*TestFunction(HasherCRC32(), "CRC32");*/ \
-	TestFunction(HasherFNV(), "FNV"); \
+	TestFunction(HasherCRC32(), "CRC32"); \
+	TestFunction(FNV1aHash(), "FNV-1a"); \
+	TestFunction(FNV1aModifiedHash(), "FNV-1aMod"); \
 	TestFunction(djb2_hash(), "djb2"); \
-	/*TestFunction(HasherBadHashFunctionWeUsedToHave(), "BadHash")*/;
+	TestFunction(SDBM_hash(), "SDBM"); \
+	TestFunction(ELF_Like_Bad_Hash(), "ELFLikeBadHash");
 
 
 static void DoTestOnRealData(const char* folderName, const char* filename)
