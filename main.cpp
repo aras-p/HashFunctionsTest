@@ -1,5 +1,6 @@
 #include "PlatformWrap.h"
 
+#include "HashFunctions/city.h"
 #include "HashFunctions/mum.h"
 #include "HashFunctions/MurmurHash2.h"
 #include "HashFunctions/MurmurHash3.h"
@@ -137,7 +138,7 @@ const size_t kSyntheticDataTotalSize = 1024 * 1024 * 64;
 const int kSyntheticDataIterations = 1;
 #else
 const size_t kSyntheticDataTotalSize = 1024 * 1024 * 128;
-const int kSyntheticDataIterations = 10;
+const int kSyntheticDataIterations = 5;
 #endif
 
 template<typename Hasher>
@@ -182,98 +183,72 @@ void TestHashPerformance(const Hasher& hasher, const char* name)
 struct HasherXXH32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return XXH32(data, size, 0x1234);
-	}
+	HashType operator()(const void* data, size_t size) const { return XXH32(data, size, 0x1234); }
 };
-
 struct HasherXXH64_32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return (HashType)XXH64(data, size, 0x1234);
-	}
+	HashType operator()(const void* data, size_t size) const { return (HashType)XXH64(data, size, 0x1234); }
 };
-
 struct HasherXXH64
 {
 	typedef uint64_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return XXH64(data, size, 0x1234);
-	}
+	HashType operator()(const void* data, size_t size) const { return XXH64(data, size, 0x1234); }
 };
 
 struct HasherSpookyV2_64
 {
 	typedef uint64_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return SpookyHash::Hash64(data, (int)size, 0x1234);
-	}
+	HashType operator()(const void* data, size_t size) const { return SpookyHash::Hash64(data, (int)size, 0x1234); }
 };
 
 struct HasherMurmur2A
 {
 	typedef uint32_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return MurmurHash2A(data, (int)size, 0x1234);
-	}
+	HashType operator()(const void* data, size_t size) const { return MurmurHash2A(data, (int)size, 0x1234); }
 };
-
 struct HasherMurmur3_32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		HashType res;
-		MurmurHash3_x86_32(data, (int)size, 0x1234, &res);
-		return res;
-	}
+	HashType operator()(const void* data, size_t size) const { HashType res; MurmurHash3_x86_32(data, (int)size, 0x1234, &res); return res; }
 };
-
 struct HasherMurmur3_x64_128
 {
 	typedef uint64_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		HashType res[2];
-		MurmurHash3_x64_128(data, (int)size, 0x1234, &res);
-		return res[0];
-	}
+	HashType operator()(const void* data, size_t size) const { HashType res[2]; MurmurHash3_x64_128(data, (int)size, 0x1234, &res); return res[0]; }
 };
 
 struct HasherMum_32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return (uint32_t)mum_hash(data, size, 0x1234);
-	}
+	HashType operator()(const void* data, size_t size) const { return (uint32_t)mum_hash(data, size, 0x1234); }
 };
-
 struct HasherMum_64
 {
 	typedef uint64_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		return mum_hash(data, size, 0x1234);
-	}
+	HashType operator()(const void* data, size_t size) const { return mum_hash(data, size, 0x1234); }
 };
 
+struct HasherCity32
+{
+	typedef uint32_t HashType;
+	HashType operator()(const void* data, size_t size) const { return CityHash32((const char*)data, size); }
+};
+struct HasherCity64_32
+{
+	typedef uint32_t HashType;
+	HashType operator()(const void* data, size_t size) const { return (uint32_t)CityHash64((const char*)data, size); }
+};
+struct HasherCity64
+{
+	typedef uint64_t HashType;
+	HashType operator()(const void* data, size_t size) const { return CityHash64((const char*)data, size); }
+};
 
 struct HasherCRC32
 {
 	typedef uint32_t HashType;
-	HashType operator()(const void* data, size_t size) const
-	{
-		HashType res;
-		crc32(data, (int)size, 0x1234, &res);
-		return res;
-	}
+	HashType operator()(const void* data, size_t size) const { HashType res; crc32(data, (int)size, 0x1234, &res); return res; }
 };
 
 
@@ -287,6 +262,8 @@ struct HasherCRC32
 	TestFunction(HasherMurmur2A(), "Murmur2A"); \
 	TestFunction(HasherMurmur3_32(), "Murmur3-32"); \
 	TestFunction(HasherMum_32(), "Mum-32"); \
+	TestFunction(HasherCity32(), "City32"); \
+	TestFunction(HasherCity64_32(), "City64-32"); \
 	/*TestFunction(HasherCRC32(), "CRC32");*/ \
 	TestFunction(FNV1aHash(), "FNV-1a"); \
 	TestFunction(FNV1aModifiedHash(), "FNV-1aMod"); \
@@ -298,6 +275,7 @@ struct HasherCRC32
 	TestFunction(HasherSpookyV2_64(), "SpookyV2-64"); \
 	TestFunction(HasherMurmur3_x64_128(), "Murmur3-X64-64"); \
 	TestFunction(HasherMum_64(), "Mum-64"); \
+	TestFunction(HasherCity64(), "City64"); \
 	;
 
 

@@ -29,6 +29,8 @@
 		2BC0EBAA1D54ABD70018BED6 /* MurmurHash3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */; };
 		2BC0EBAB1D54ABD70018BED6 /* SpookyV2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB951D54A6F30018BED6 /* SpookyV2.cpp */; };
 		2BC0EBAC1D54ABD70018BED6 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB971D54A6F30018BED6 /* xxhash.c */; };
+		2BC0EBB11D54CEAA0018BED6 /* city.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBAF1D54CEAA0018BED6 /* city.cc */; };
+		2BC0EBB21D54D3340018BED6 /* city.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBAF1D54CEAA0018BED6 /* city.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -72,6 +74,8 @@
 		2BC0EBA71D54A93B0018BED6 /* PlatformWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWrap.h; sourceTree = "<group>"; };
 		2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleHashFunctions.h; path = HashFunctions/SimpleHashFunctions.h; sourceTree = "<group>"; };
 		2BC0EBAE1D54BA960018BED6 /* mum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mum.h; path = HashFunctions/mum.h; sourceTree = "<group>"; };
+		2BC0EBAF1D54CEAA0018BED6 /* city.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = city.cc; path = HashFunctions/city.cc; sourceTree = "<group>"; };
+		2BC0EBB01D54CEAA0018BED6 /* city.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = city.h; path = HashFunctions/city.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,13 +144,15 @@
 		2BC0EB8C1D54A6E40018BED6 /* HashFunctions */ = {
 			isa = PBXGroup;
 			children = (
-				2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */,
+				2BC0EBAF1D54CEAA0018BED6 /* city.cc */,
+				2BC0EBB01D54CEAA0018BED6 /* city.h */,
 				2BC0EB8D1D54A6F30018BED6 /* crc.cpp */,
 				2BC0EBAE1D54BA960018BED6 /* mum.h */,
 				2BC0EB911D54A6F30018BED6 /* MurmurHash2.cpp */,
 				2BC0EB921D54A6F30018BED6 /* MurmurHash2.h */,
 				2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */,
 				2BC0EB941D54A6F30018BED6 /* MurmurHash3.h */,
+				2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */,
 				2BC0EB951D54A6F30018BED6 /* SpookyV2.cpp */,
 				2BC0EB961D54A6F30018BED6 /* SpookyV2.h */,
 				2BC0EB971D54A6F30018BED6 /* xxhash.c */,
@@ -217,6 +223,7 @@
 					};
 					2BC0A38A1D51BFD20018BED6 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = Z6SFPV59E3;
 					};
 				};
 			};
@@ -264,6 +271,7 @@
 				2BC0EB991D54A6F30018BED6 /* crc.cpp in Sources */,
 				2BC0EB9D1D54A6F30018BED6 /* xxhash.c in Sources */,
 				2BC0EB9A1D54A6F30018BED6 /* MurmurHash2.cpp in Sources */,
+				2BC0EBB11D54CEAA0018BED6 /* city.cc in Sources */,
 				2BC0EB9C1D54A6F30018BED6 /* SpookyV2.cpp in Sources */,
 				2BC0A3581D506D270018BED6 /* main.cpp in Sources */,
 				2BC0EB9B1D54A6F30018BED6 /* MurmurHash3.cpp in Sources */,
@@ -278,6 +286,7 @@
 				2BC0A3951D51BFD20018BED6 /* ViewController.m in Sources */,
 				2BC0EBAB1D54ABD70018BED6 /* SpookyV2.cpp in Sources */,
 				2BC0A3921D51BFD20018BED6 /* AppDelegate.m in Sources */,
+				2BC0EBB21D54D3340018BED6 /* city.cc in Sources */,
 				2BC0EBA81D54ABD10018BED6 /* crc.cpp in Sources */,
 				2BC0A3A61D51BFEE0018BED6 /* main.cpp in Sources */,
 				2BC0EBA91D54ABD70018BED6 /* MurmurHash2.cpp in Sources */,
@@ -407,12 +416,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = iOSHashTest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aras.iOSHashTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -422,12 +433,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = iOSHashTest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aras.iOSHashTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
