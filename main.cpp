@@ -365,9 +365,20 @@ static void DoTestSyntheticData()
 
 extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 {
+	// Basic collisions / hash quality tests on some real world data I had lying around:
+	// - Dictionary of English words from /usr/share/dict/words
+	// - A bunch of file relative paths + filenames from several Unity projects & test suites.
+	//   Imaginary use case, hashing filenames in some asset database / file storage system.
+	// - C++ source code, this was partial Unity sourcecode dump. I'm not releasing this one :),
+	//   but it was 6069 entries, 43.7MB total size, average size 7546.6 bytes.
+	// - Mostly binary data. I instrumented hash function calls, as used in Unity engine graphics
+	//   related parts, to dump actually hashed data into a log file. Unlike the test sets above,
+	//   most of the data here is binary, and represents snapshots of some internal structs in
+	//   memory.
 	//DoTestOnRealData(folderName, "test-words.txt");
 	//DoTestOnRealData(folderName, "test-filenames.txt");
 	//DoTestOnRealData(folderName, "test-code.txt");
+	//DoTestOnRealData(folderName, "test-binary.bin");
 	DoTestSyntheticData();
 }
 
