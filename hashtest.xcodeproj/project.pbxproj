@@ -31,6 +31,8 @@
 		2BC0EBAC1D54ABD70018BED6 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB971D54A6F30018BED6 /* xxhash.c */; };
 		2BC0EBB11D54CEAA0018BED6 /* city.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBAF1D54CEAA0018BED6 /* city.cc */; };
 		2BC0EBB21D54D3340018BED6 /* city.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBAF1D54CEAA0018BED6 /* city.cc */; };
+		2BC0EBB51D54D6A40018BED6 /* farmhash.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBB31D54D6A40018BED6 /* farmhash.cc */; };
+		2BC0EBB61D54DA2A0018BED6 /* farmhash.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBB31D54D6A40018BED6 /* farmhash.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -76,6 +78,8 @@
 		2BC0EBAE1D54BA960018BED6 /* mum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mum.h; path = HashFunctions/mum.h; sourceTree = "<group>"; };
 		2BC0EBAF1D54CEAA0018BED6 /* city.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = city.cc; path = HashFunctions/city.cc; sourceTree = "<group>"; };
 		2BC0EBB01D54CEAA0018BED6 /* city.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = city.h; path = HashFunctions/city.h; sourceTree = "<group>"; };
+		2BC0EBB31D54D6A40018BED6 /* farmhash.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = farmhash.cc; path = HashFunctions/farmhash.cc; sourceTree = "<group>"; };
+		2BC0EBB41D54D6A40018BED6 /* farmhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = farmhash.h; path = HashFunctions/farmhash.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +152,8 @@
 				2BC0EBB01D54CEAA0018BED6 /* city.h */,
 				2BC0EB8D1D54A6F30018BED6 /* crc.cpp */,
 				2BC0EBAE1D54BA960018BED6 /* mum.h */,
+				2BC0EBB31D54D6A40018BED6 /* farmhash.cc */,
+				2BC0EBB41D54D6A40018BED6 /* farmhash.h */,
 				2BC0EB911D54A6F30018BED6 /* MurmurHash2.cpp */,
 				2BC0EB921D54A6F30018BED6 /* MurmurHash2.h */,
 				2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */,
@@ -269,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2BC0EB991D54A6F30018BED6 /* crc.cpp in Sources */,
+				2BC0EBB51D54D6A40018BED6 /* farmhash.cc in Sources */,
 				2BC0EB9D1D54A6F30018BED6 /* xxhash.c in Sources */,
 				2BC0EB9A1D54A6F30018BED6 /* MurmurHash2.cpp in Sources */,
 				2BC0EBB11D54CEAA0018BED6 /* city.cc in Sources */,
@@ -282,6 +289,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BC0EBB61D54DA2A0018BED6 /* farmhash.cc in Sources */,
 				2BC0EBAA1D54ABD70018BED6 /* MurmurHash3.cpp in Sources */,
 				2BC0A3951D51BFD20018BED6 /* ViewController.m in Sources */,
 				2BC0EBAB1D54ABD70018BED6 /* SpookyV2.cpp in Sources */,

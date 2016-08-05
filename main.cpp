@@ -1,6 +1,7 @@
 #include "PlatformWrap.h"
 
 #include "HashFunctions/city.h"
+#include "HashFunctions/farmhash.h"
 #include "HashFunctions/mum.h"
 #include "HashFunctions/MurmurHash2.h"
 #include "HashFunctions/MurmurHash3.h"
@@ -245,6 +246,22 @@ struct HasherCity64
 	HashType operator()(const void* data, size_t size) const { return CityHash64((const char*)data, size); }
 };
 
+struct HasherFarm32
+{
+	typedef uint32_t HashType;
+	HashType operator()(const void* data, size_t size) const { return util::Hash32((const char*)data, size); }
+};
+struct HasherFarm64_32
+{
+	typedef uint32_t HashType;
+	HashType operator()(const void* data, size_t size) const { return (uint32_t)util::Hash64((const char*)data, size); }
+};
+struct HasherFarm64
+{
+	typedef uint64_t HashType;
+	HashType operator()(const void* data, size_t size) const { return util::Hash64((const char*)data, size); }
+};
+
 struct HasherCRC32
 {
 	typedef uint32_t HashType;
@@ -264,18 +281,21 @@ struct HasherCRC32
 	TestFunction(HasherMum_32(), "Mum-32"); \
 	TestFunction(HasherCity32(), "City32"); \
 	TestFunction(HasherCity64_32(), "City64-32"); \
+	TestFunction(HasherFarm32(), "Farm32"); \
+	TestFunction(HasherFarm64_32(), "Farm64-32"); \
 	/*TestFunction(HasherCRC32(), "CRC32");*/ \
-	TestFunction(FNV1aHash(), "FNV-1a"); \
-	TestFunction(FNV1aModifiedHash(), "FNV-1aMod"); \
-	TestFunction(djb2_hash(), "djb2"); \
-	TestFunction(SDBM_hash(), "SDBM"); \
-	TestFunction(ELF_Like_Bad_Hash(), "ELFLikeBadHash"); \
+	/*TestFunction(FNV1aHash(), "FNV-1a");*/ \
+	/*TestFunction(FNV1aModifiedHash(), "FNV-1aMod");*/ \
+	/*TestFunction(djb2_hash(), "djb2");*/ \
+	/*TestFunction(SDBM_hash(), "SDBM");*/ \
+	/*TestFunction(ELF_Like_Bad_Hash(), "ELFLikeBadHash");*/ \
 	/* 64 bit hashes */ \
 	TestFunction(HasherXXH64(), "xxHash64"); \
 	TestFunction(HasherSpookyV2_64(), "SpookyV2-64"); \
 	TestFunction(HasherMurmur3_x64_128(), "Murmur3-X64-64"); \
 	TestFunction(HasherMum_64(), "Mum-64"); \
 	TestFunction(HasherCity64(), "City64"); \
+	TestFunction(HasherFarm64(), "Farm64"); \
 	;
 
 
