@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+#include "PlatformWrap.h"
 
 #include "HashFunctions/CStringHash.h"
 #include "HashFunctions/FNVHash.h"
@@ -18,67 +18,6 @@
 FILE* g_OutputFile = stdout;
 
 extern void crc32 (const void * key, int len, uint32_t seed, void * out);
-
-
-// ------------------------------------------------------------------------------------
-// Timer code
-
-#ifdef _MSC_VER
-	#include <Windows.h>
-	static LARGE_INTEGER s_Time0;
-	static void TimerBegin()
-	{
-		QueryPerformanceCounter (&s_Time0);
-	}
-	static float TimerEnd()
-	{
-		static bool timerInited = false;
-		static LARGE_INTEGER ticksPerSec;
-		if (!timerInited) {
-			QueryPerformanceFrequency(&ticksPerSec);
-			timerInited = true;
-		}
-		LARGE_INTEGER ttt1;
-		QueryPerformanceCounter (&ttt1);
-		float timeTaken = float(double(ttt1.QuadPart-s_Time0.QuadPart) / double(ticksPerSec.QuadPart));
-		return timeTaken;
-	}
-
-#elif defined(__APPLE__)
-	#include <TargetConditionals.h>
-	#include <sys/time.h>
-	static timeval s_Time0;
-	static void TimerBegin()
-	{
-		gettimeofday(&s_Time0, NULL);
-	}
-	static float TimerEnd()
-	{
-		timeval ttt1;
-		gettimeofday( &ttt1, NULL );
-		timeval ttt2;
-		timersub( &ttt1, &s_Time0, &ttt2 );
-		float timeTaken = ttt2.tv_sec + ttt2.tv_usec * 1.0e-6f;
-
-		return timeTaken;
-	}	
-#elif defined(EMSCRIPTEN)
-	#include "emscripten.h"
-	static double s_Time0;
-	static void TimerBegin()
-	{
-		s_Time0 = emscripten_get_now();
-	}
-	static float TimerEnd()
-	{
-		double t = emscripten_get_now();
-		float timeTaken = (t - s_Time0) * 0.001;
-		return timeTaken;
-	}	
-#else
-	#error "Unknown platform, timer code missing"
-#endif
-
 
 
 // ------------------------------------------------------------------------------------
@@ -350,7 +289,7 @@ static void DoTestOnRealData(const char* folderName, const char* filename)
 
 static void DoTestSyntheticData()
 {
-#if defined(EMSCRIPTEN) || defined(_XBOX_ONE)
+#if PLATFORM_WEBL || PLATFORM_XBOXONE || PLATFORM_PS4
 	const size_t kSize = 1024 * 1024 * 64;
 #else
 	const size_t kSize = 1024 * 1024 * 128;
@@ -383,11 +322,19 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 }
 
 
-#if !TARGET_OS_IPHONE && !defined(_XBOX_ONE)
+// iOS & XB1 has main entry points elsewhere
+#if !PLATFORM_IOS && !PLATFORM_XBOXONE
+
 int main()
 {
-	HashFunctionsTestEntryPoint("");
+	#if PLATFORM_PS4
+	const char* folderName = "/app0/";
+	#else
+	const char* folderName = "";
+	#endif
+	HashFunctionsTestEntryPoint(folderName);
 	return 0;
 }
-#endif
+
+#endif // #if !PLATFORM_IOS && !PLATFORM_XBOXONE
 

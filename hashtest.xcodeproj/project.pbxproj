@@ -24,6 +24,11 @@
 		2BC0EBA41D54A7480018BED6 /* test-code.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2BC0EBA01D54A7390018BED6 /* test-code.txt */; };
 		2BC0EBA51D54A7480018BED6 /* test-filenames.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2BC0EBA11D54A7390018BED6 /* test-filenames.txt */; };
 		2BC0EBA61D54A7480018BED6 /* test-words.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2BC0EBA21D54A7390018BED6 /* test-words.txt */; };
+		2BC0EBA81D54ABD10018BED6 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB8D1D54A6F30018BED6 /* crc.cpp */; };
+		2BC0EBA91D54ABD70018BED6 /* MurmurHash2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB911D54A6F30018BED6 /* MurmurHash2.cpp */; };
+		2BC0EBAA1D54ABD70018BED6 /* MurmurHash3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */; };
+		2BC0EBAB1D54ABD70018BED6 /* SpookyV2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB951D54A6F30018BED6 /* SpookyV2.cpp */; };
+		2BC0EBAC1D54ABD70018BED6 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EB971D54A6F30018BED6 /* xxhash.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -67,6 +72,7 @@
 		2BC0EBA01D54A7390018BED6 /* test-code.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "test-code.txt"; path = "TestData/test-code.txt"; sourceTree = "<group>"; };
 		2BC0EBA11D54A7390018BED6 /* test-filenames.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "test-filenames.txt"; path = "TestData/test-filenames.txt"; sourceTree = "<group>"; };
 		2BC0EBA21D54A7390018BED6 /* test-words.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "test-words.txt"; path = "TestData/test-words.txt"; sourceTree = "<group>"; };
+		2BC0EBA71D54A93B0018BED6 /* PlatformWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWrap.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,9 +96,10 @@
 		2BC0A3381D506CE60018BED6 = {
 			isa = PBXGroup;
 			children = (
-				2BC0EB9E1D54A7030018BED6 /* TestData */,
 				2BC0EB8C1D54A6E40018BED6 /* HashFunctions */,
+				2BC0EB9E1D54A7030018BED6 /* TestData */,
 				2BC0A3571D506D270018BED6 /* main.cpp */,
+				2BC0EBA71D54A93B0018BED6 /* PlatformWrap.h */,
 				2BC0A38C1D51BFD20018BED6 /* iOSHashTest */,
 				2BC0A3421D506CE60018BED6 /* Products */,
 			);
@@ -269,9 +276,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BC0EBAA1D54ABD70018BED6 /* MurmurHash3.cpp in Sources */,
 				2BC0A3951D51BFD20018BED6 /* ViewController.m in Sources */,
+				2BC0EBAB1D54ABD70018BED6 /* SpookyV2.cpp in Sources */,
 				2BC0A3921D51BFD20018BED6 /* AppDelegate.m in Sources */,
+				2BC0EBA81D54ABD10018BED6 /* crc.cpp in Sources */,
 				2BC0A3A61D51BFEE0018BED6 /* main.cpp in Sources */,
+				2BC0EBA91D54ABD70018BED6 /* MurmurHash2.cpp in Sources */,
+				2BC0EBAC1D54ABD70018BED6 /* xxhash.c in Sources */,
 				2BC0A38F1D51BFD20018BED6 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
