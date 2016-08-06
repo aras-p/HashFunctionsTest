@@ -5,11 +5,13 @@
 
 // Various simple hash functions, with inline implementations
 
+struct Hasher32Bit { typedef uint32_t HashType; };
+struct Hasher64Bit { typedef uint64_t HashType; };
+
 
 // djb2 based on http://www.cse.yorku.ca/~oz/hash.html
-struct djb2_hash
+struct djb2_hash : public Hasher32Bit
 {
-	typedef unsigned int HashType;
 	inline HashType operator()(const char* s, size_t size) const
 	{
 		HashType hash = 5381;
@@ -23,9 +25,8 @@ struct djb2_hash
 };
 
 // SDBM based on http://www.cse.yorku.ca/~oz/hash.html
-struct SDBM_hash
+struct SDBM_hash : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const
 	{
 		HashType hash = 0;
@@ -42,9 +43,8 @@ struct SDBM_hash
 
 
 // 32 bit Fowler-Noll-Vo hash (FNV-1a) https://en.wikipedia.org/wiki/Fowler–Noll–Vo_hash_function
-struct FNV1aHash
+struct FNV1aHash : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	inline HashType operator()(const void* data, size_t size) const
 	{
 		const char* c = (const char*)data;
@@ -61,9 +61,8 @@ struct FNV1aHash
 
 // Modified 32 bit FNV-1a hash, from http://papa.bretmulvey.com/post/124027987928/hash-functions
 // with better avalanche behavior and uniform distribution with larger hash sizes.
-struct FNV1aModifiedHash
+struct FNV1aModifiedHash : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	inline HashType operator()(const void* data, size_t size) const
 	{
 		const char* c = (const char*)data;
@@ -89,9 +88,8 @@ struct FNV1aModifiedHash
 // Hash function we had in our codebase, from some super old code. Was not used much, but
 // a few places did use it. No one knows where it came from, but seems similar to the one
 // used by ELF symbol table: http://www.sco.com/developers/gabi/latest/ch5.dynamic.html#hash
-struct ELF_Like_Bad_Hash
+struct ELF_Like_Bad_Hash : public Hasher32Bit
 {
-	typedef unsigned HashType;
 	HashType operator ()(const void* data, size_t size) const
 	{
 		const char* key = (const char*)data;

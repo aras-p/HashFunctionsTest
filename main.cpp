@@ -182,103 +182,85 @@ void TestHashPerformance(const Hasher& hasher, const char* name)
 // ------------------------------------------------------------------------------------
 // Individual hash functions for use in the testing code above
 
-struct HasherXXH32
+struct HasherXXH32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { return XXH32(data, size, 0x1234); }
 };
-struct HasherXXH64_32
+struct HasherXXH64_32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { return (HashType)XXH64(data, size, 0x1234); }
 };
-struct HasherXXH64
+struct HasherXXH64 : public Hasher64Bit
 {
-	typedef uint64_t HashType;
 	HashType operator()(const void* data, size_t size) const { return XXH64(data, size, 0x1234); }
 };
 
-struct HasherSpookyV2_64
+struct HasherSpookyV2_64 : public Hasher64Bit
 {
-	typedef uint64_t HashType;
 	HashType operator()(const void* data, size_t size) const { return SpookyHash::Hash64(data, (int)size, 0x1234); }
 };
 
-struct HasherMurmur2A
+struct HasherMurmur2A : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { return MurmurHash2A(data, (int)size, 0x1234); }
 };
-struct HasherMurmur3_32
+struct HasherMurmur3_32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { HashType res; MurmurHash3_x86_32(data, (int)size, 0x1234, &res); return res; }
 };
-struct HasherMurmur3_x64_128
+struct HasherMurmur3_x64_128 : public Hasher64Bit
 {
-	typedef uint64_t HashType;
 	HashType operator()(const void* data, size_t size) const { HashType res[2]; MurmurHash3_x64_128(data, (int)size, 0x1234, &res); return res[0]; }
 };
 
-struct HasherMum_32
+struct HasherMum_32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { return (uint32_t)mum_hash(data, size, 0x1234); }
 };
-struct HasherMum_64
+struct HasherMum_64 : public Hasher64Bit
 {
-	typedef uint64_t HashType;
 	HashType operator()(const void* data, size_t size) const { return mum_hash(data, size, 0x1234); }
 };
 
-struct HasherCity32
+struct HasherCity32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { return CityHash32((const char*)data, size); }
 };
-struct HasherCity64_32
+struct HasherCity64_32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { return (uint32_t)CityHash64((const char*)data, size); }
 };
-struct HasherCity64
+struct HasherCity64 : public Hasher64Bit
 {
-	typedef uint64_t HashType;
 	HashType operator()(const void* data, size_t size) const { return CityHash64((const char*)data, size); }
 };
 
-struct HasherFarm32
+struct HasherFarm32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { return util::Hash32((const char*)data, size); }
 };
-struct HasherFarm64_32
+struct HasherFarm64_32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { return (uint32_t)util::Hash64((const char*)data, size); }
 };
-struct HasherFarm64
+struct HasherFarm64 : public Hasher64Bit
 {
-	typedef uint64_t HashType;
 	HashType operator()(const void* data, size_t size) const { return util::Hash64((const char*)data, size); }
 };
 
 // Reference SipHash implementation, https://github.com/veorq/SipHash
 static const uint8_t kSipHashKey[16] = {0x75,0x4E,0x3F,0x38, 0x21,0x0A,0xFE,0x71, 0x9D,0xDC,0x54,0x72, 0x09,0x1A,0xD4,0x79};
-struct HasherSipRef_32
+struct HasherSipRef_32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { uint64_t res; siphash((uint8_t*)&res, (const uint8_t*)data, size, kSipHashKey); return (HashType)res; }
 };
-struct HasherSipRef
+struct HasherSipRef : public Hasher64Bit
 {
-	typedef uint64_t HashType;
 	HashType operator()(const void* data, size_t size) const { uint64_t res; siphash((uint8_t*)&res, (const uint8_t*)data, size, kSipHashKey); return res; }
 };
 
-struct HasherCRC32
+struct HasherCRC32 : public Hasher32Bit
 {
-	typedef uint32_t HashType;
 	HashType operator()(const void* data, size_t size) const { HashType res; crc32(data, (int)size, 0x1234, &res); return res; }
 };
 
