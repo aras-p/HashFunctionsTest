@@ -33,6 +33,7 @@
 		2BC0EBB21D54D3340018BED6 /* city.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBAF1D54CEAA0018BED6 /* city.cc */; };
 		2BC0EBB51D54D6A40018BED6 /* farmhash.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBB31D54D6A40018BED6 /* farmhash.cc */; };
 		2BC0EBB61D54DA2A0018BED6 /* farmhash.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBB31D54D6A40018BED6 /* farmhash.cc */; };
+		2BC0EBB81D55DD7E0018BED6 /* siphash24.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBB71D55DD7E0018BED6 /* siphash24.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -80,6 +81,7 @@
 		2BC0EBB01D54CEAA0018BED6 /* city.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = city.h; path = HashFunctions/city.h; sourceTree = "<group>"; };
 		2BC0EBB31D54D6A40018BED6 /* farmhash.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = farmhash.cc; path = HashFunctions/farmhash.cc; sourceTree = "<group>"; };
 		2BC0EBB41D54D6A40018BED6 /* farmhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = farmhash.h; path = HashFunctions/farmhash.h; sourceTree = "<group>"; };
+		2BC0EBB71D55DD7E0018BED6 /* siphash24.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = siphash24.c; path = HashFunctions/siphash24.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +161,7 @@
 				2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */,
 				2BC0EB941D54A6F30018BED6 /* MurmurHash3.h */,
 				2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */,
+				2BC0EBB71D55DD7E0018BED6 /* siphash24.c */,
 				2BC0EB951D54A6F30018BED6 /* SpookyV2.cpp */,
 				2BC0EB961D54A6F30018BED6 /* SpookyV2.h */,
 				2BC0EB971D54A6F30018BED6 /* xxhash.c */,
@@ -281,6 +284,7 @@
 				2BC0EBB11D54CEAA0018BED6 /* city.cc in Sources */,
 				2BC0EB9C1D54A6F30018BED6 /* SpookyV2.cpp in Sources */,
 				2BC0A3581D506D270018BED6 /* main.cpp in Sources */,
+				2BC0EBB81D55DD7E0018BED6 /* siphash24.c in Sources */,
 				2BC0EB9B1D54A6F30018BED6 /* MurmurHash3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -19,6 +19,7 @@
 FILE* g_OutputFile = stdout;
 
 extern void crc32 (const void * key, int len, uint32_t seed, void * out);
+extern "C" int siphash(uint8_t *out, const uint8_t *in, uint64_t inlen, const uint8_t *k);
 
 
 // ------------------------------------------------------------------------------------
@@ -262,6 +263,19 @@ struct HasherFarm64
 	HashType operator()(const void* data, size_t size) const { return util::Hash64((const char*)data, size); }
 };
 
+// Reference SipHash implementation, https://github.com/veorq/SipHash
+static const uint8_t kSipHashKey[16] = {0x75,0x4E,0x3F,0x38, 0x21,0x0A,0xFE,0x71, 0x9D,0xDC,0x54,0x72, 0x09,0x1A,0xD4,0x79};
+struct HasherSipRef_32
+{
+	typedef uint32_t HashType;
+	HashType operator()(const void* data, size_t size) const { uint64_t res; siphash((uint8_t*)&res, (const uint8_t*)data, size, kSipHashKey); return (HashType)res; }
+};
+struct HasherSipRef
+{
+	typedef uint64_t HashType;
+	HashType operator()(const void* data, size_t size) const { uint64_t res; siphash((uint8_t*)&res, (const uint8_t*)data, size, kSipHashKey); return res; }
+};
+
 struct HasherCRC32
 {
 	typedef uint32_t HashType;
@@ -274,7 +288,7 @@ struct HasherCRC32
 
 #define TEST_HASHES(TestFunction) \
 	/* 32 bit hashes */ \
-	TestFunction(HasherXXH32(), "xxHash32"); \
+	/*TestFunction(HasherXXH32(), "xxHash32"); \
 	TestFunction(HasherXXH64_32(), "xxHash64-32"); \
 	TestFunction(HasherMurmur2A(), "Murmur2A"); \
 	TestFunction(HasherMurmur3_32(), "Murmur3-32"); \
@@ -283,6 +297,7 @@ struct HasherCRC32
 	TestFunction(HasherCity64_32(), "City64-32"); \
 	TestFunction(HasherFarm32(), "Farm32"); \
 	TestFunction(HasherFarm64_32(), "Farm64-32"); \
+	TestFunction(HasherSipRef_32(), "SipRef-32");*/ \
 	/*TestFunction(HasherCRC32(), "CRC32");*/ \
 	/*TestFunction(FNV1aHash(), "FNV-1a");*/ \
 	/*TestFunction(FNV1aModifiedHash(), "FNV-1aMod");*/ \
@@ -296,6 +311,7 @@ struct HasherCRC32
 	TestFunction(HasherMum_64(), "Mum-64"); \
 	TestFunction(HasherCity64(), "City64"); \
 	TestFunction(HasherFarm64(), "Farm64"); \
+	TestFunction(HasherSipRef(), "SipRef"); \
 	;
 
 
