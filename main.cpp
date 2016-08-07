@@ -125,8 +125,10 @@ static double CalculateExpectedCollisions(size_t bucketCount, size_t entryCount)
 
 
 template<typename Hasher>
-void TestQualityOnDataSet(const Hasher& hasher, const DataSet& dataset, Result::DataSetResult& outResult)
+void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResult)
 {
+	Hasher hasher;
+
 	// test for "hash quality":
 	// unique hashes found in all the entries (#entries - uniq == how many collisions found)
 	std::set<typename Hasher::HashType> uniq;
@@ -165,36 +167,41 @@ const int kSyntheticDataIterations = 5;
 
 // synthetic hash performance test on various string lengths
 template<typename Hasher>
-void TestPerformancePerLength(const Hasher& hasher, const std::vector<uint8_t>& data, Result& outResult)
+void TestPerformancePerLength(const std::vector<uint8_t>& data, Result& outResult)
 {
+	Hasher hasher;
+
 	int step = 2;
-	for (int len = 2; len < 5000; len += step, step += step/2)
+	int index = 0;
+	for (int len = 2; len < 5000; len += step, step += step/2, ++index)
 	{
 		size_t dataLen = data.size();
-		// do several iterations and pick smallest time
-		float minsec = 1.0e6f;
-		size_t totalBytes = 0;
-		for (int iterations = 0; iterations < kSyntheticDataIterations; ++iterations)
-		{
-			const uint8_t* dataPtr = data.data();
-			TimerBegin();
-			size_t pos = 0;
-			while (pos + len < dataLen)
-			{
-				outResult.hashsum ^= hasher(dataPtr + pos, len);
-				pos += len;
-			}
-			float sec = TimerEnd();
-			totalBytes = pos;
-			if (sec < minsec)
-				minsec = sec;
-		}
-		// MB/s
-		double mbps = (totalBytes / 1024.0 / 1024.0) / minsec;
-		outResult.mbpsPerLength.push_back(std::make_pair(len, (float)mbps));
 
-		// use hashsum in a fake way so that it's not completely compiled away by the optimizer
-		//fprintf(g_OutputFile, "%15s: len %4i %8.0f MB/s\n", name, len, mbps + (hashsum & 7)*0.00001);
+		const uint8_t* dataPtr = data.data();
+		TimerBegin();
+		size_t pos = 0;
+		while (pos + len < dataLen)
+		{
+			outResult.hashsum ^= hasher(dataPtr + pos, len);
+			pos += len;
+		}
+		float sec = TimerEnd();
+		size_t totalBytes = pos;
+
+		// MB/s
+		float mbps = (float)((totalBytes / 1024.0 / 1024.0) / sec);
+		if (index < outResult.mbpsPerLength.size())
+		{
+			// if we got higher MB/s, use that (i.e. out of all iterations, we pick fastest one)
+			assert(outResult.mbpsPerLength[index].first == len);
+			if (mbps > outResult.mbpsPerLength[index].second)
+				outResult.mbpsPerLength[index].second = mbps;
+		}
+		else
+		{
+			// add result if no previous iterations did it yet
+			outResult.mbpsPerLength.push_back(std::make_pair(len, mbps));
+		}
 	}
 }
 
@@ -292,26 +299,25 @@ static std::vector<DataSet*> g_DataSets;
 static std::vector<uint8_t> g_SyntheticData;
 static std::vector<Result> g_Results;
 
+typedef void (*TestHashQualityFunc)(const DataSet& dataset, Result::DataSetResult& outResult);
+typedef void (*TestHashPerfFunc)(const std::vector<uint8_t>& data, Result& outResult);
 
-template<typename Hasher>
-static void TestHashFunction(const Hasher& hasher, const char* name)
+struct HashToTest
 {
-	fprintf(g_OutputFile, "%s ", name);
-	fflush(g_OutputFile);
-	g_Results.push_back(Result());
-	Result& res = g_Results.back();
-	res.name = name;
-
-	// quality evaluation on out data sets
-	res.datasets.resize(g_DataSets.size());
-	for (size_t i = 0, n = g_DataSets.size(); i != n; ++i)
-	{
-		TestQualityOnDataSet(hasher, *g_DataSets[i], res.datasets[i]);
-	}
-
-	// performance evaluation on different data lengths
-	TestPerformancePerLength(hasher, g_SyntheticData, res);
+	const char* name;
+	TestHashQualityFunc qualityFunc;
+	TestHashPerfFunc perfFunc;
 };
+static std::vector<HashToTest> g_Hashes;
+
+static void AddHash(const char* name, TestHashQualityFunc qualityFunc, TestHashPerfFunc perfFunc)
+{
+	HashToTest h;
+	h.name = name;
+	h.qualityFunc = qualityFunc;
+	h.perfFunc = perfFunc;
+	g_Hashes.push_back(h);
+}
 
 
 static void CreateSyntheticData()
@@ -376,42 +382,79 @@ static void PrintResults()
 
 extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 {
+	// load data
 	fprintf(g_OutputFile, "Loading data\n");
 	CreateSyntheticData();
 	LoadDataSets(folderName);
 	g_Results.reserve(50);
-
-	fprintf(g_OutputFile, "Testing... ");
+	
+	// setup hash functions to test
+#	define ADDHASH(name,clazz) AddHash(name, TestQualityOnDataSet<clazz>, TestPerformancePerLength<clazz>)
 
 	// 32 bit hashes
-	TestHashFunction(HasherXXH32(), "xxHash32");
-	TestHashFunction(HasherXXH64_32(), "xxHash64-32");
-	TestHashFunction(HasherMurmur2A(), "Murmur2A");
-	TestHashFunction(HasherMurmur3_32(), "Murmur3-32");
-	TestHashFunction(HasherMum_32(), "Mum-32");
-	TestHashFunction(HasherCity32(), "City32");
-	TestHashFunction(HasherCity64_32(), "City64-32");
-	TestHashFunction(HasherFarm32(), "Farm32");
-	TestHashFunction(HasherFarm64_32(), "Farm64-32");
-	TestHashFunction(HasherSipRef_32(), "SipRef-32");
-	TestHashFunction(HasherCRC32(), "CRC32");
-	TestHashFunction(FNV1aHash(), "FNV-1a");
-	TestHashFunction(FNV1aModifiedHash(), "FNV-1aMod");
-	TestHashFunction(djb2_hash(), "djb2");
-	TestHashFunction(SDBM_hash(), "SDBM");
-	TestHashFunction(ELF_Like_Bad_Hash(), "ELFLikeBadHash");
+	ADDHASH("xxHash32", HasherXXH32);
+	ADDHASH("xxHash64-32", HasherXXH64_32);
+	ADDHASH("Murmur2A", HasherMurmur2A);
+	ADDHASH("Murmur3-32", HasherMurmur3_32);
+	ADDHASH("Mum-32", HasherMum_32);
+	ADDHASH("City32", HasherCity32);
+	ADDHASH("City64-32", HasherCity64_32);
+	ADDHASH("Farm32", HasherFarm32);
+	ADDHASH("Farm64-32", HasherFarm64_32);
+	ADDHASH("SipRef-32", HasherSipRef_32);
+	ADDHASH("CRC32", HasherCRC32);
+	ADDHASH("FNV-1a", FNV1aHash);
+	ADDHASH("FNV-1amod", FNV1aModifiedHash);
+	ADDHASH("djb2", djb2_hash);
+	ADDHASH("SDBM", SDBM_hash);
+	ADDHASH("ELFLikeBadHash", ELF_Like_Bad_Hash);
 
 	// 64 bit hashes
 	
-	TestHashFunction(HasherXXH64(), "xxHash64");
-	TestHashFunction(HasherSpookyV2_64(), "SpookyV2-64");
-	TestHashFunction(HasherMurmur3_x64_128(), "Murmur3-X64-64");
-	TestHashFunction(HasherMum_64(), "Mum");
-	TestHashFunction(HasherCity64(), "City64");
-	TestHashFunction(HasherFarm64(), "Farm64");
-	TestHashFunction(HasherSipRef(), "SipRef");
+	ADDHASH("xxHash64", HasherXXH64);
+	ADDHASH("SpookyV2-64", HasherSpookyV2_64);
+	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128);
+	ADDHASH("Mum", HasherMum_64);
+	ADDHASH("City64", HasherCity64);
+	ADDHASH("Farm64", HasherFarm64);
+	ADDHASH("SipRef", HasherSipRef);
+#	undef ADDHASH
 
-	fprintf(g_OutputFile, "\n\n");
+	// do quality evaluations on all hash functions
+	fprintf(g_OutputFile, "Doing quality evals...\n  ");
+	for (size_t i = 0; i < g_Hashes.size(); ++i)
+	{
+		const HashToTest& hash = g_Hashes[i];
+		g_Results.push_back(Result());
+		Result& res = g_Results.back();
+		res.name = hash.name;
+		res.datasets.resize(g_DataSets.size());
+		fprintf(g_OutputFile, "%s ", hash.name);
+		fflush(g_OutputFile);
+		for (size_t id = 0, nd = g_DataSets.size(); id != nd; ++id)
+		{
+			hash.qualityFunc(*g_DataSets[id], res.datasets[id]);
+		}
+	}
+	fprintf(g_OutputFile, "\n");
+
+	// Do performance evaluations on all hash functions.
+	// Perform several iterations: for (iterations) { for (hashes) { DoPerfTest } }.
+	// Iterations are performed in the outer loop, so that any clock changes affect
+	// all hash functions in a fair way.
+	fprintf(g_OutputFile, "Doing performance evals...\n");
+	for (int iter = 0; iter < kSyntheticDataIterations; ++iter)
+	{
+		fprintf(g_OutputFile, "  iter %i/%i\n", iter+1, kSyntheticDataIterations);
+		for (size_t i = 0; i < g_Hashes.size(); ++i)
+		{
+			const HashToTest& hash = g_Hashes[i];
+			Result& res = g_Results[i];
+			hash.perfFunc(g_SyntheticData, res);
+		}
+	}
+
+	// print results
 	PrintResults();
 }
 
