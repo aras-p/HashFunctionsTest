@@ -12,8 +12,9 @@ struct Hasher64Bit { typedef uint64_t HashType; };
 // djb2 based on http://www.cse.yorku.ca/~oz/hash.html
 struct djb2_hash : public Hasher32Bit
 {
-	inline HashType operator()(const char* s, size_t size) const
+	inline HashType operator()(const void* data, size_t size) const
 	{
+		const char* s = (const char*)data;
 		HashType hash = 5381;
 		for (size_t i = 0; i < size; ++i)
 		{

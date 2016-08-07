@@ -14,6 +14,7 @@
 #include <set>
 #include <map>
 #include <stdio.h>
+#include <math.h>
 
 
 FILE* g_OutputFile = stdout;
@@ -25,50 +26,58 @@ extern "C" int siphash(uint8_t *out, const uint8_t *in, uint64_t inlen, const ui
 // ------------------------------------------------------------------------------------
 // Data sets & reading them from file
 
-
-typedef std::vector<std::string> WordList;
-
-static WordList g_Words;
-static size_t g_TotalSize;
-
-static std::string g_SyntheticData;
-
-static void ReadWords(const char* filename)
+struct DataSet
 {
-	g_Words.clear();
-	FILE* f = fopen(filename, "rb");
+	DataSet() : totalSize(0) { }
+
+	typedef std::pair<size_t,size_t> OffsetAndSize;
+
+	std::string name;
+	std::vector<char> buffer; // raw file contents
+	std::vector<OffsetAndSize> entries; // entries in the file data array, each has offset and length
+	size_t totalSize; // total size of data that will be hashed (file size, minus all entry delimiters)
+};
+
+static DataSet* ReadDataSet(const char* folderName, const char* filename)
+{
+	std::string fullPath = std::string(folderName) + std::string(filename);
+	FILE* f = fopen(fullPath.c_str(), "rb");
 	if (!f)
 	{
-		fprintf(g_OutputFile, "error: can't open dictionary file '%s'\n", filename);
-		return;
+		fprintf(g_OutputFile, "error: can't open dataset file '%s'\n", filename);
+		return NULL;
 	}
+	DataSet* data = new DataSet();
+	data->name = filename;
+
 	fseek(f, 0, SEEK_END);
 	size_t size = ftell(f);
 	fseek(f, 0, SEEK_SET);
-	char* buffer = new char[size];
+
+	data->buffer.resize(size);
+	char* buffer = data->buffer.data();
 	fread(buffer, size, 1, f);
 
 	size_t pos = 0;
 	size_t wordStart = 0;
-	g_TotalSize = 0;
+	data->totalSize = 0;
 	while (pos < size)
 	{
 		if (buffer[pos] == '\n')
 		{
-			std::string word;
-			word.assign(buffer+wordStart, pos-wordStart);
-			// remove any trailing windows newlines
-			while (!word.empty() && word[word.size()-1] == '\r')
-				word.pop_back();
-			g_Words.push_back(word);
-			g_TotalSize += word.size();
+			size_t wordEnd = pos;
+			// remove any trailing Windows style newlines
+			while (wordEnd > wordStart && buffer[wordEnd] == '\r')
+				--wordEnd;
+			data->entries.push_back(std::make_pair(wordStart, wordEnd-wordStart));
+			data->totalSize += wordEnd-wordStart;
 			wordStart = pos+1;
 		}
 		++pos;
 	}
 	
-	delete[] buffer;
 	fclose(f);
+	return data;
 }
 
 
@@ -87,51 +96,61 @@ inline uint32_t NextPowerOfTwo(uint32_t v)
 }
 
 
-template<typename Hasher>
-void TestOnData(const Hasher& hasher, const char* name)
+struct Result
 {
-	// hash all the entries; do several iterations and pick smallest time
-	typename Hasher::HashType hashsum = 0x1234;
-	float minsec = 1.0e6f;
-	for (int iterations = 0; iterations < 5; ++iterations)
+	struct DataSetResult
 	{
-		TimerBegin();
-		for (size_t i = 0, n = g_Words.size(); i != n; ++i)
-		{
-			const std::string& s = g_Words[i];
-			hashsum ^= hasher(s.data(), s.size());
-		}
-		float sec = TimerEnd();
-		if (sec < minsec)
-			minsec = sec;
-	}
-	// MB/s on real data
-	double mbps = (g_TotalSize / 1024.0 / 1024.0) / minsec;
+		DataSetResult() : collisions(0), hashtabCollisionsIncrease(0) { }
+		int collisions;
+		float hashtabCollisionsIncrease; // % of how much hashtable collisions we'd get, compared to an ideal hash
+	};
+	
+	Result() : hashsum(0) { mbpsPerLength.reserve(32); }
 
+	std::string name;
+	std::vector< std::pair<int,float> > mbpsPerLength;
+	std::vector<DataSetResult> datasets;
+	uint32_t hashsum;
+};
+
+
+// http://stackoverflow.com/questions/9104504/expected-number-of-hash-collisions
+static double CalculateExpectedCollisions(size_t bucketCount, size_t entryCount)
+{
+	double m = bucketCount;
+	double n = entryCount;
+	double e = n - m * (1 - pow((m-1)/m, n));
+	return e;
+}
+
+
+template<typename Hasher>
+void TestQualityOnDataSet(const Hasher& hasher, const DataSet& dataset, Result::DataSetResult& outResult)
+{
 	// test for "hash quality":
 	// unique hashes found in all the entries (#entries - uniq == how many collisions found)
 	std::set<typename Hasher::HashType> uniq;
+
 	// unique buckets that we'd end up with, if we had a hashtable with a load factor of 0.8 that is
 	// always power of two size.
-	std::map<typename Hasher::HashType, int> uniqModulo;
-	size_t hashtableSize = NextPowerOfTwo(g_Words.size() / 0.8);
-	int maxBucket = 0;
-	for (size_t i = 0, n = g_Words.size(); i != n; ++i)
-	{
-		const std::string& s = g_Words[i];
-		typename Hasher::HashType h = hasher(s.data(), s.size());
-		uniq.insert(h);
-		int bucketSize = uniqModulo[h % hashtableSize]++;
-		if (bucketSize > maxBucket)
-			maxBucket = bucketSize;
-	}
-	size_t collisions = g_Words.size() - uniq.size();
-	size_t collisionsHashtable = g_Words.size() - uniqModulo.size();
-	double avgBucket = (double)g_Words.size() / uniqModulo.size();
+	std::set<typename Hasher::HashType> uniqModulo;
+	const size_t entryCount = dataset.entries.size();
+	size_t hashtableSize = NextPowerOfTwo(entryCount / 0.8);
 
-	// use hashsum in a fake way so that it's not completely compiled away by the optimizer
-	mbps += (hashsum & 0x7) * 0.0001;
-	fprintf(g_OutputFile, "%15s: %6.0f MB/s, %4i cols, %5i htcols %2i max %.3f avgbuckt\n", name, mbps, (int)collisions, (int)collisionsHashtable, maxBucket, avgBucket);
+	double expectedCollisons = CalculateExpectedCollisions(hashtableSize, entryCount);
+	for (size_t i = 0; i != entryCount; ++i)
+	{
+		typename Hasher::HashType h = hasher(dataset.buffer.data() + dataset.entries[i].first, dataset.entries[i].second);
+		uniq.insert(h);
+		uniqModulo.insert(h % hashtableSize);
+	}
+	outResult.collisions = (int)(entryCount - uniq.size());
+
+	double hashtabCollisions = entryCount - uniqModulo.size();
+	double collisionsIncrease = (hashtabCollisions / expectedCollisons - 1.0) * 100;
+	if (collisionsIncrease < 0)
+		collisionsIncrease = 0;
+	outResult.hashtabCollisionsIncrease = collisionsIncrease;
 }
 
 
@@ -139,30 +158,30 @@ void TestOnData(const Hasher& hasher, const char* name)
 const size_t kSyntheticDataTotalSize = 1024 * 1024 * 64;
 const int kSyntheticDataIterations = 1;
 #else
-const size_t kSyntheticDataTotalSize = 1024 * 1024 * 128;
+const size_t kSyntheticDataTotalSize = 1024 * 1024 * 2;
 const int kSyntheticDataIterations = 5;
 #endif
 
+
+// synthetic hash performance test on various string lengths
 template<typename Hasher>
-void TestHashPerformance(const Hasher& hasher, const char* name)
+void TestPerformancePerLength(const Hasher& hasher, const std::vector<uint8_t>& data, Result& outResult)
 {
-	// synthetic hash performance test on various string lengths
 	int step = 2;
-	for (int len = 2; len < 4000; len += step, step += step/2)
+	for (int len = 2; len < 5000; len += step, step += step/2)
 	{
-		typename Hasher::HashType hashsum = 0x1234;
-		size_t dataLen = g_SyntheticData.size();
+		size_t dataLen = data.size();
 		// do several iterations and pick smallest time
 		float minsec = 1.0e6f;
 		size_t totalBytes = 0;
 		for (int iterations = 0; iterations < kSyntheticDataIterations; ++iterations)
 		{
-			const char* dataPtr = g_SyntheticData.data();
+			const uint8_t* dataPtr = data.data();
 			TimerBegin();
 			size_t pos = 0;
 			while (pos + len < dataLen)
 			{
-				hashsum ^= hasher(dataPtr + pos, len);
+				outResult.hashsum ^= hasher(dataPtr + pos, len);
 				pos += len;
 			}
 			float sec = TimerEnd();
@@ -172,9 +191,10 @@ void TestHashPerformance(const Hasher& hasher, const char* name)
 		}
 		// MB/s
 		double mbps = (totalBytes / 1024.0 / 1024.0) / minsec;
+		outResult.mbpsPerLength.push_back(std::make_pair(len, (float)mbps));
 
 		// use hashsum in a fake way so that it's not completely compiled away by the optimizer
-		fprintf(g_OutputFile, "%15s: len %4i %8.0f MB/s\n", name, len, mbps + (hashsum & 7)*0.00001);
+		//fprintf(g_OutputFile, "%15s: len %4i %8.0f MB/s\n", name, len, mbps + (hashsum & 7)*0.00001);
 	}
 }
 
@@ -268,59 +288,40 @@ struct HasherCRC32 : public Hasher32Bit
 // ------------------------------------------------------------------------------------
 // Main program
 
-#define TEST_HASHES(TestFunction) \
-	/* 32 bit hashes */ \
-	/*TestFunction(HasherXXH32(), "xxHash32"); \
-	TestFunction(HasherXXH64_32(), "xxHash64-32"); \
-	TestFunction(HasherMurmur2A(), "Murmur2A"); \
-	TestFunction(HasherMurmur3_32(), "Murmur3-32"); \
-	TestFunction(HasherMum_32(), "Mum-32"); \
-	TestFunction(HasherCity32(), "City32"); \
-	TestFunction(HasherCity64_32(), "City64-32"); \
-	TestFunction(HasherFarm32(), "Farm32"); \
-	TestFunction(HasherFarm64_32(), "Farm64-32"); \
-	TestFunction(HasherSipRef_32(), "SipRef-32");*/ \
-	/*TestFunction(HasherCRC32(), "CRC32");*/ \
-	/*TestFunction(FNV1aHash(), "FNV-1a");*/ \
-	/*TestFunction(FNV1aModifiedHash(), "FNV-1aMod");*/ \
-	/*TestFunction(djb2_hash(), "djb2");*/ \
-	/*TestFunction(SDBM_hash(), "SDBM");*/ \
-	/*TestFunction(ELF_Like_Bad_Hash(), "ELFLikeBadHash");*/ \
-	/* 64 bit hashes */ \
-	TestFunction(HasherXXH64(), "xxHash64"); \
-	TestFunction(HasherSpookyV2_64(), "SpookyV2-64"); \
-	TestFunction(HasherMurmur3_x64_128(), "Murmur3-X64-64"); \
-	TestFunction(HasherMum_64(), "Mum-64"); \
-	TestFunction(HasherCity64(), "City64"); \
-	TestFunction(HasherFarm64(), "Farm64"); \
-	TestFunction(HasherSipRef(), "SipRef"); \
-	;
+static std::vector<DataSet*> g_DataSets;
+static std::vector<uint8_t> g_SyntheticData;
+static std::vector<Result> g_Results;
 
 
-static void DoTestOnRealData(const char* folderName, const char* filename)
+template<typename Hasher>
+static void TestHashFunction(const Hasher& hasher, const char* name)
 {
-	std::string fullPath = std::string(folderName) + filename;
+	fprintf(g_OutputFile, "%s ", name);
+	fflush(g_OutputFile);
+	g_Results.push_back(Result());
+	Result& res = g_Results.back();
+	res.name = name;
 
-	ReadWords(fullPath.c_str());
-	if (g_Words.empty())
-		return;
-	fprintf(g_OutputFile, "Testing on %s: %i entries (%.1f MB size, avg length %.1f)\n", filename, (int)g_Words.size(), g_TotalSize / 1024.0 / 1024.0, double(g_TotalSize) / g_Words.size());
-	TEST_HASHES(TestOnData);
-	g_Words.clear();
-}
+	// quality evaluation on out data sets
+	res.datasets.resize(g_DataSets.size());
+	for (size_t i = 0, n = g_DataSets.size(); i != n; ++i)
+	{
+		TestQualityOnDataSet(hasher, *g_DataSets[i], res.datasets[i]);
+	}
+
+	// performance evaluation on different data lengths
+	TestPerformancePerLength(hasher, g_SyntheticData, res);
+};
 
 
-static void DoTestSyntheticData()
+static void CreateSyntheticData()
 {
 	g_SyntheticData.resize(kSyntheticDataTotalSize);
 	for (size_t i = 0; i < kSyntheticDataTotalSize; ++i)
 		g_SyntheticData[i] = i;
-	fprintf(g_OutputFile, "Testing on synthetic data\n");
-	TEST_HASHES(TestHashPerformance);
-	g_SyntheticData.clear();
 }
 
-extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
+static void LoadDataSets(const char* folderName)
 {
 	// Basic collisions / hash quality tests on some real world data I had lying around:
 	// - Dictionary of English words from /usr/share/dict/words
@@ -332,17 +333,86 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	//   related parts, to dump actually hashed data into a log file. Unlike the test sets above,
 	//   most of the data here is binary, and represents snapshots of some internal structs in
 	//   memory.
-#	if 0
-	DoTestOnRealData(folderName, "TestData/test-words.txt");
-	DoTestOnRealData(folderName, "TestData/test-filenames.txt");
-	DoTestOnRealData(folderName, "TestData/test-code.txt");
-	DoTestOnRealData(folderName, "TestData/test-binary.bin");
-#	endif
+	DataSet* data;
+	data = ReadDataSet(folderName, "TestData/test-words.txt"); if (data) g_DataSets.push_back(data);
+	data = ReadDataSet(folderName, "TestData/test-filenames.txt"); if (data) g_DataSets.push_back(data);
+	data = ReadDataSet(folderName, "TestData/test-code.txt"); if (data) g_DataSets.push_back(data);
+	data = ReadDataSet(folderName, "TestData/test-binary.bin"); if (data) g_DataSets.push_back(data);
+}
 
-	// Performance tests on synthetic data of various lengths
-#	if 1
-	DoTestSyntheticData();
-#	endif
+static void PrintResults()
+{
+	fprintf(g_OutputFile, "**** Quality evaluation\n");
+	for (size_t id = 0; id < g_DataSets.size(); ++id)
+	{
+		const DataSet& data = *g_DataSets[id];
+		fprintf(g_OutputFile, "%s, %i entries, %.1f MB size, avg length %.1f\n", data.name.c_str(), (int)data.entries.size(), data.totalSize / 1024.0 / 1024.0, double(data.totalSize) / data.entries.size());
+		fprintf(g_OutputFile, "HashAlgorithm   Colis HTColsIncrease\n");
+		for (size_t ia = 0; ia < g_Results.size(); ++ia)
+		{
+			const Result::DataSetResult& res = g_Results[ia].datasets[id];
+			fprintf(g_OutputFile, "%15s %4i %6i\n", g_Results[ia].name.c_str(), res.collisions, (int)res.hashtabCollisionsIncrease);
+		}
+	}
+
+	fprintf(g_OutputFile, "\n**** Performance evaluation, MB/s\n");
+	fprintf(g_OutputFile, "DataSize,");
+	for (size_t ia = 0; ia < g_Results.size(); ++ia)
+	{
+		fprintf(g_OutputFile, "%s,", g_Results[ia].name.c_str());
+	}
+	fprintf(g_OutputFile, "\n");
+	for (size_t is = 0; is < g_Results[0].mbpsPerLength.size(); ++is)
+	{
+		fprintf(g_OutputFile, "%i,", g_Results[0].mbpsPerLength[is].first);
+		for (size_t ia = 0; ia < g_Results.size(); ++ia)
+		{
+			fprintf(g_OutputFile, "%i,", (int)g_Results[ia].mbpsPerLength[is].second);
+		}
+		fprintf(g_OutputFile, "\n");
+	}
+	fprintf(g_OutputFile, "\n");
+}
+
+extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
+{
+	fprintf(g_OutputFile, "Loading data\n");
+	CreateSyntheticData();
+	LoadDataSets(folderName);
+	g_Results.reserve(50);
+
+	fprintf(g_OutputFile, "Testing... ");
+
+	// 32 bit hashes
+	TestHashFunction(HasherXXH32(), "xxHash32");
+	TestHashFunction(HasherXXH64_32(), "xxHash64-32");
+	TestHashFunction(HasherMurmur2A(), "Murmur2A");
+	TestHashFunction(HasherMurmur3_32(), "Murmur3-32");
+	TestHashFunction(HasherMum_32(), "Mum-32");
+	TestHashFunction(HasherCity32(), "City32");
+	TestHashFunction(HasherCity64_32(), "City64-32");
+	TestHashFunction(HasherFarm32(), "Farm32");
+	TestHashFunction(HasherFarm64_32(), "Farm64-32");
+	TestHashFunction(HasherSipRef_32(), "SipRef-32");
+	TestHashFunction(HasherCRC32(), "CRC32");
+	TestHashFunction(FNV1aHash(), "FNV-1a");
+	TestHashFunction(FNV1aModifiedHash(), "FNV-1aMod");
+	TestHashFunction(djb2_hash(), "djb2");
+	TestHashFunction(SDBM_hash(), "SDBM");
+	TestHashFunction(ELF_Like_Bad_Hash(), "ELFLikeBadHash");
+
+	// 64 bit hashes
+	
+	TestHashFunction(HasherXXH64(), "xxHash64");
+	TestHashFunction(HasherSpookyV2_64(), "SpookyV2-64");
+	TestHashFunction(HasherMurmur3_x64_128(), "Murmur3-X64-64");
+	TestHashFunction(HasherMum_64(), "Mum");
+	TestHashFunction(HasherCity64(), "City64");
+	TestHashFunction(HasherFarm64(), "Farm64");
+	TestHashFunction(HasherSipRef(), "SipRef");
+
+	fprintf(g_OutputFile, "\n\n");
+	PrintResults();
 }
 
 
