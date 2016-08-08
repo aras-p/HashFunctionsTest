@@ -156,13 +156,8 @@ void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResu
 }
 
 
-#if PLATFORM_WEBL || PLATFORM_XBOXONE || PLATFORM_PS4
-const size_t kSyntheticDataTotalSize = 1024 * 1024 * 64;
-const int kSyntheticDataIterations = 1;
-#else
-const size_t kSyntheticDataTotalSize = 1024 * 1024 * 2;
-const int kSyntheticDataIterations = 5;
-#endif
+const size_t kSyntheticDataTotalSize = 1024 * 1024 * 1;
+const int kSyntheticDataIterations = 7;
 
 
 // synthetic hash performance test on various string lengths
