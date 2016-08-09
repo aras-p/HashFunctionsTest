@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B8969E11D59B32100B4E31C /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B8969DE1D59B32100B4E31C /* md5.cpp */; };
+		2B8969E21D59B32100B4E31C /* sha1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B8969DF1D59B32100B4E31C /* sha1.cpp */; };
+		2B8969E41D59B97A00B4E31C /* sha1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B8969DF1D59B32100B4E31C /* sha1.cpp */; };
+		2B8969E51D59B98000B4E31C /* siphash24.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBB71D55DD7E0018BED6 /* siphash24.c */; };
+		2B8969E61D59B98F00B4E31C /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B8969DE1D59B32100B4E31C /* md5.cpp */; };
 		2BC0A3581D506D270018BED6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A3571D506D270018BED6 /* main.cpp */; };
 		2BC0A38F1D51BFD20018BED6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A38E1D51BFD20018BED6 /* main.m */; };
 		2BC0A3921D51BFD20018BED6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A3911D51BFD20018BED6 /* AppDelegate.m */; };
@@ -49,6 +54,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B8969DE1D59B32100B4E31C /* md5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = md5.cpp; path = HashFunctions/md5.cpp; sourceTree = "<group>"; };
+		2B8969DF1D59B32100B4E31C /* sha1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sha1.cpp; path = HashFunctions/sha1.cpp; sourceTree = "<group>"; };
+		2B8969E01D59B32100B4E31C /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = HashFunctions/sha1.h; sourceTree = "<group>"; };
+		2B8969E31D59B37C00B4E31C /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = HashFunctions/Platform.h; sourceTree = "<group>"; };
 		2BC0A3411D506CE60018BED6 /* hashtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hashtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BC0A3571D506D270018BED6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2BC0A38B1D51BFD20018BED6 /* iOSHashTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSHashTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,11 +165,15 @@
 				2BC0EBAE1D54BA960018BED6 /* mum.h */,
 				2BC0EBB31D54D6A40018BED6 /* farmhash.cc */,
 				2BC0EBB41D54D6A40018BED6 /* farmhash.h */,
+				2B8969DE1D59B32100B4E31C /* md5.cpp */,
 				2BC0EB911D54A6F30018BED6 /* MurmurHash2.cpp */,
 				2BC0EB921D54A6F30018BED6 /* MurmurHash2.h */,
 				2BC0EB931D54A6F30018BED6 /* MurmurHash3.cpp */,
 				2BC0EB941D54A6F30018BED6 /* MurmurHash3.h */,
+				2B8969E31D59B37C00B4E31C /* Platform.h */,
 				2BC0EBAD1D54AD9D0018BED6 /* SimpleHashFunctions.h */,
+				2B8969DF1D59B32100B4E31C /* sha1.cpp */,
+				2B8969E01D59B32100B4E31C /* sha1.h */,
 				2BC0EBB71D55DD7E0018BED6 /* siphash24.c */,
 				2BC0EB951D54A6F30018BED6 /* SpookyV2.cpp */,
 				2BC0EB961D54A6F30018BED6 /* SpookyV2.h */,
@@ -283,8 +296,10 @@
 				2BC0EB9A1D54A6F30018BED6 /* MurmurHash2.cpp in Sources */,
 				2BC0EBB11D54CEAA0018BED6 /* city.cc in Sources */,
 				2BC0EB9C1D54A6F30018BED6 /* SpookyV2.cpp in Sources */,
+				2B8969E11D59B32100B4E31C /* md5.cpp in Sources */,
 				2BC0A3581D506D270018BED6 /* main.cpp in Sources */,
 				2BC0EBB81D55DD7E0018BED6 /* siphash24.c in Sources */,
+				2B8969E21D59B32100B4E31C /* sha1.cpp in Sources */,
 				2BC0EB9B1D54A6F30018BED6 /* MurmurHash3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -294,7 +309,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2BC0EBB61D54DA2A0018BED6 /* farmhash.cc in Sources */,
+				2B8969E51D59B98000B4E31C /* siphash24.c in Sources */,
 				2BC0EBAA1D54ABD70018BED6 /* MurmurHash3.cpp in Sources */,
+				2B8969E41D59B97A00B4E31C /* sha1.cpp in Sources */,
 				2BC0A3951D51BFD20018BED6 /* ViewController.m in Sources */,
 				2BC0EBAB1D54ABD70018BED6 /* SpookyV2.cpp in Sources */,
 				2BC0A3921D51BFD20018BED6 /* AppDelegate.m in Sources */,
@@ -303,6 +320,7 @@
 				2BC0A3A61D51BFEE0018BED6 /* main.cpp in Sources */,
 				2BC0EBA91D54ABD70018BED6 /* MurmurHash2.cpp in Sources */,
 				2BC0EBAC1D54ABD70018BED6 /* xxhash.c in Sources */,
+				2B8969E61D59B98F00B4E31C /* md5.cpp in Sources */,
 				2BC0A38F1D51BFD20018BED6 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
