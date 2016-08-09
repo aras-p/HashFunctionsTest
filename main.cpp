@@ -102,15 +102,23 @@ struct Result
 {
 	struct DataSetResult
 	{
-		DataSetResult() : collisions(0), hashtabCollisionsIncrease(0) { }
+		DataSetResult() : hashsum(0), collisions(0), hashtabCollisionsIncrease(0) { }
+		uint32_t hashsum;
 		int collisions;
 		float hashtabCollisionsIncrease; // % of how much hashtable collisions we'd get, compared to an ideal hash
+	};
+	struct PerfResult
+	{
+		PerfResult() : length(0), mbps(0), mbpsAligned(0) { }
+		int length;
+		int mbps;
+		int mbpsAligned;
 	};
 	
 	Result() : hashsum(0) { mbpsPerLength.reserve(32); }
 
 	std::string name;
-	std::vector< std::pair<int,float> > mbpsPerLength;
+	std::vector<PerfResult> mbpsPerLength;
 	std::vector<DataSetResult> datasets;
 	uint32_t hashsum;
 };
@@ -142,9 +150,11 @@ void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResu
 	size_t hashtableSize = NextPowerOfTwo(entryCount / 0.8);
 
 	double expectedCollisons = CalculateExpectedCollisions(hashtableSize, entryCount);
+	outResult.hashsum = 0;
 	for (size_t i = 0; i != entryCount; ++i)
 	{
 		typename Hasher::HashType h = hasher(dataset.buffer.data() + dataset.entries[i].first, dataset.entries[i].second);
+		outResult.hashsum ^= (uint32_t)h;
 		uniq.insert(h);
 		uniqModulo.insert(h % hashtableSize);
 	}
@@ -159,12 +169,12 @@ void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResu
 
 
 const size_t kSyntheticDataTotalSize = 1024 * 1024 * 1;
-const int kSyntheticDataIterations = 7;
+const int kSyntheticDataIterations = 9;
 
 
 // synthetic hash performance test on various string lengths
 template<typename Hasher>
-void TestPerformancePerLength(const std::vector<uint8_t>& data, Result& outResult)
+void TestPerformancePerLength(const std::vector<uint8_t>& data, bool aligned, Result& outResult)
 {
 	Hasher hasher;
 
@@ -177,27 +187,45 @@ void TestPerformancePerLength(const std::vector<uint8_t>& data, Result& outResul
 		const uint8_t* dataPtr = data.data();
 		TimerBegin();
 		size_t pos = 0;
+		size_t lenAligned = len;
+		//if (aligned)
+			lenAligned = (lenAligned + 63) & ~63;
+		size_t totalBytes = 0;
 		while (pos + len < dataLen)
 		{
 			outResult.hashsum ^= hasher(dataPtr + pos, len);
-			pos += len;
+			pos += lenAligned;
+			totalBytes += len;
 		}
 		float sec = TimerEnd();
-		size_t totalBytes = pos;
 
 		// MB/s
 		float mbps = (float)((totalBytes / 1024.0 / 1024.0) / sec);
 		if (index < outResult.mbpsPerLength.size())
 		{
 			// if we got higher MB/s, use that (i.e. out of all iterations, we pick fastest one)
-			assert(outResult.mbpsPerLength[index].first == len);
-			if (mbps > outResult.mbpsPerLength[index].second)
-				outResult.mbpsPerLength[index].second = mbps;
+			assert(outResult.mbpsPerLength[index].length == len);
+			if (aligned)
+			{
+				if (mbps > outResult.mbpsPerLength[index].mbpsAligned)
+					outResult.mbpsPerLength[index].mbpsAligned = mbps;
+			}
+			else
+			{
+				if (mbps > outResult.mbpsPerLength[index].mbps)
+					outResult.mbpsPerLength[index].mbps = mbps;
+			}
 		}
 		else
 		{
 			// add result if no previous iterations did it yet
-			outResult.mbpsPerLength.push_back(std::make_pair(len, mbps));
+			Result::PerfResult res;
+			res.length = len;
+			if (aligned)
+				res.mbpsAligned = mbps;
+			else
+				res.mbps = mbps;
+			outResult.mbpsPerLength.push_back(res);
 		}
 	}
 }
@@ -317,7 +345,7 @@ static std::vector<uint8_t> g_SyntheticData;
 static std::vector<Result> g_Results;
 
 typedef void (*TestHashQualityFunc)(const DataSet& dataset, Result::DataSetResult& outResult);
-typedef void (*TestHashPerfFunc)(const std::vector<uint8_t>& data, Result& outResult);
+typedef void (*TestHashPerfFunc)(const std::vector<uint8_t>& data, bool aligned, Result& outResult);
 
 struct HashToTest
 {
@@ -370,11 +398,11 @@ static void PrintResults()
 	{
 		const DataSet& data = *g_DataSets[id];
 		fprintf(g_OutputFile, "%s, %i entries, %.1f MB size, avg length %.1f\n", data.name.c_str(), (int)data.entries.size(), data.totalSize / 1024.0 / 1024.0, double(data.totalSize) / data.entries.size());
-		fprintf(g_OutputFile, "HashAlgorithm   Colis HTColsIncrease\n");
+		fprintf(g_OutputFile, "HashAlgorithm   Colis HTColsIncrease hashsum\n");
 		for (size_t ia = 0; ia < g_Results.size(); ++ia)
 		{
 			const Result::DataSetResult& res = g_Results[ia].datasets[id];
-			fprintf(g_OutputFile, "%15s %4i %6i\n", g_Results[ia].name.c_str(), res.collisions, (int)res.hashtabCollisionsIncrease);
+			fprintf(g_OutputFile, "%15s %4i %6i           %08x\n", g_Results[ia].name.c_str(), res.collisions, (int)res.hashtabCollisionsIncrease, res.hashsum);
 		}
 	}
 
@@ -387,10 +415,28 @@ static void PrintResults()
 	fprintf(g_OutputFile, "\n");
 	for (size_t is = 0; is < g_Results[0].mbpsPerLength.size(); ++is)
 	{
-		fprintf(g_OutputFile, "%i,", g_Results[0].mbpsPerLength[is].first);
+		fprintf(g_OutputFile, "%i,", g_Results[0].mbpsPerLength[is].length);
 		for (size_t ia = 0; ia < g_Results.size(); ++ia)
 		{
-			fprintf(g_OutputFile, "%i,", (int)g_Results[ia].mbpsPerLength[is].second);
+			fprintf(g_OutputFile, "%i,", (int)g_Results[ia].mbpsPerLength[is].mbps);
+		}
+		fprintf(g_OutputFile, "\n");
+	}
+	fprintf(g_OutputFile, "\n");
+
+	fprintf(g_OutputFile, "\n**** Aligned data performance evaluation, MB/s\n");
+	fprintf(g_OutputFile, "DataSize,");
+	for (size_t ia = 0; ia < g_Results.size(); ++ia)
+	{
+		fprintf(g_OutputFile, "%s,", g_Results[ia].name.c_str());
+	}
+	fprintf(g_OutputFile, "\n");
+	for (size_t is = 0; is < g_Results[0].mbpsPerLength.size(); ++is)
+	{
+		fprintf(g_OutputFile, "%i,", g_Results[0].mbpsPerLength[is].length);
+		for (size_t ia = 0; ia < g_Results.size(); ++ia)
+		{
+			fprintf(g_OutputFile, "%i,", (int)g_Results[ia].mbpsPerLength[is].mbpsAligned);
 		}
 		fprintf(g_OutputFile, "\n");
 	}
@@ -469,7 +515,18 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 		{
 			const HashToTest& hash = g_Hashes[i];
 			Result& res = g_Results[i];
-			hash.perfFunc(g_SyntheticData, res);
+			hash.perfFunc(g_SyntheticData, false, res);
+		}
+	}
+	fprintf(g_OutputFile, "  aligned data...\n");
+	for (int iter = 0; iter < kSyntheticDataIterations; ++iter)
+	{
+		fprintf(g_OutputFile, "  iter %i/%i\n", iter+1, kSyntheticDataIterations);
+		for (size_t i = 0; i < g_Hashes.size(); ++i)
+		{
+			const HashToTest& hash = g_Hashes[i];
+			Result& res = g_Results[i];
+			hash.perfFunc(g_SyntheticData, true, res);
 		}
 	}
 
