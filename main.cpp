@@ -40,13 +40,18 @@ struct DataSet
 	size_t totalSize; // total size of data that will be hashed (file size, minus all entry delimiters)
 };
 
-static DataSet* ReadDataSet(const char* folderName, const char* filename)
+static DataSet* ReadDataSet(const char* folderName, const char* filenameStr)
 {
-	std::string fullPath = std::string(folderName) + std::string(filename);
+	std::string filename = std::string(filenameStr);
+#	if PLATFORM_IOS
+	filename.erase(0, 9); // remove TestData/ on iOS; files in resources only retain the filenames
+#	endif
+
+	std::string fullPath = std::string(folderName) + filename;
 	FILE* f = fopen(fullPath.c_str(), "rb");
 	if (!f)
 	{
-		fprintf(g_OutputFile, "error: can't open dataset file '%s'\n", filename);
+		fprintf(g_OutputFile, "error: can't open dataset file '%s'\n", filename.c_str());
 		return NULL;
 	}
 	DataSet* data = new DataSet();
