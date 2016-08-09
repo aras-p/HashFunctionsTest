@@ -174,7 +174,12 @@ void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResu
 
 
 const size_t kSyntheticDataTotalSize = 1024 * 1024 * 1;
+#if PLATFORM_WEBGL
+const int kSyntheticDataIterations = 3;
+#else
 const int kSyntheticDataIterations = 9;
+#endif
+
 
 
 // synthetic hash performance test on various string lengths
