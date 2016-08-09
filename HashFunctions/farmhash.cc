@@ -26,6 +26,12 @@
 // (or its equivalent for your compiler); if you use -DFARMHASH_ASSUME_AESNI
 // you likely need -maes (or its equivalent for your compiler).
 
+// LOCAL MODS BEGIN
+#ifdef _MSC_VER
+#define FARMHASH_NO_BUILTIN_EXPECT
+#endif
+// LOCAL MODS END
+
 #ifdef FARMHASH_ASSUME_SSSE3
 #undef FARMHASH_ASSUME_SSSE3
 #define FARMHASH_ASSUME_SSSE3 1

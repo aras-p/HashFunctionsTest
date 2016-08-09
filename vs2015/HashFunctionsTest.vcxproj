@@ -162,7 +162,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\HashFunctions\city.cc" />
     <ClCompile Include="..\HashFunctions\crc.cpp" />
+    <ClCompile Include="..\HashFunctions\farmhash.cc" />
+    <ClCompile Include="..\HashFunctions\md5.cpp" />
+    <ClCompile Include="..\HashFunctions\sha1.cpp" />
+    <ClCompile Include="..\HashFunctions\siphash24.c" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\HashFunctions\MurmurHash2.cpp" />
     <ClCompile Include="..\HashFunctions\MurmurHash3.cpp" />
@@ -170,11 +175,14 @@
     <ClCompile Include="..\HashFunctions\xxhash.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\HashFunctions\CStringHash.h" />
-    <ClInclude Include="..\HashFunctions\FNVHash.h" />
-    <ClInclude Include="..\HashFunctions\HashFunctions.h" />
+    <ClInclude Include="..\HashFunctions\city.h" />
+    <ClInclude Include="..\HashFunctions\farmhash.h" />
+    <ClInclude Include="..\HashFunctions\mum.h" />
     <ClInclude Include="..\HashFunctions\MurmurHash2.h" />
     <ClInclude Include="..\HashFunctions\MurmurHash3.h" />
+    <ClInclude Include="..\HashFunctions\Platform.h" />
+    <ClInclude Include="..\HashFunctions\sha1.h" />
+    <ClInclude Include="..\HashFunctions\SimpleHashFunctions.h" />
     <ClInclude Include="..\HashFunctions\SpookyV2.h" />
     <ClInclude Include="..\HashFunctions\xxhash.h" />
   </ItemGroup>

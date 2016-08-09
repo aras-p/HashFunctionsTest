@@ -74,7 +74,7 @@ static DataSet* ReadDataSet(const char* folderName, const char* filenameStr)
 		{
 			size_t wordEnd = pos;
 			// remove any trailing Windows style newlines
-			while (wordEnd > wordStart && buffer[wordEnd] == '\r')
+			while (wordEnd > wordStart+1 && buffer[wordEnd-1] == '\r')
 				--wordEnd;
 			data->entries.push_back(std::make_pair(wordStart, wordEnd-wordStart));
 			data->totalSize += wordEnd-wordStart;

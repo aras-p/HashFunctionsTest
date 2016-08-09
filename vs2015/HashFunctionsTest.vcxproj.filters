@@ -1,20 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\HashFunctions\crc.cpp" />
     <ClCompile Include="..\main.cpp" />
-    <ClCompile Include="..\HashFunctions\MurmurHash2.cpp" />
-    <ClCompile Include="..\HashFunctions\MurmurHash3.cpp" />
-    <ClCompile Include="..\HashFunctions\SpookyV2.cpp" />
-    <ClCompile Include="..\HashFunctions\xxhash.c" />
+    <ClCompile Include="..\HashFunctions\crc.cpp">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\MurmurHash2.cpp">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\MurmurHash3.cpp">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\SpookyV2.cpp">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\xxhash.c">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\city.cc">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\farmhash.cc">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\md5.cpp">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\sha1.cpp">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HashFunctions\siphash24.c">
+      <Filter>HashFunctions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\HashFunctions\CStringHash.h" />
-    <ClInclude Include="..\HashFunctions\FNVHash.h" />
-    <ClInclude Include="..\HashFunctions\HashFunctions.h" />
-    <ClInclude Include="..\HashFunctions\MurmurHash2.h" />
-    <ClInclude Include="..\HashFunctions\MurmurHash3.h" />
-    <ClInclude Include="..\HashFunctions\SpookyV2.h" />
-    <ClInclude Include="..\HashFunctions\xxhash.h" />
+    <ClInclude Include="..\HashFunctions\MurmurHash2.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\MurmurHash3.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\SpookyV2.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\xxhash.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\city.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\farmhash.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\mum.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\Platform.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\sha1.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\SimpleHashFunctions.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="HashFunctions">
+      <UniqueIdentifier>{828b463b-181b-465a-b2df-8238f2bdb7e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
