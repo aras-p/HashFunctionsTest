@@ -6,6 +6,7 @@
 #include "HashFunctions/MurmurHash2.h"
 #include "HashFunctions/MurmurHash3.h"
 #include "HashFunctions/SimpleHashFunctions.h"
+#include "HashFunctions/sha1.h"
 #include "HashFunctions/SpookyV2.h"
 #include "HashFunctions/xxhash.h"
 
@@ -20,6 +21,7 @@
 FILE* g_OutputFile = stdout;
 
 extern void crc32 (const void * key, int len, uint32_t seed, void * out);
+extern void md5_32 (const void * key, int len, uint32_t /*seed*/, void * out);
 extern "C" int siphash(uint8_t *out, const uint8_t *in, uint64_t inlen, const uint8_t *k);
 
 
@@ -239,7 +241,7 @@ struct HasherMum_32 : public Hasher32Bit
 {
 	HashType operator()(const void* data, size_t size) const { return (uint32_t)mum_hash(data, size, 0x1234); }
 };
-struct HasherMum_64 : public Hasher64Bit
+struct HasherMum : public Hasher64Bit
 {
 	HashType operator()(const void* data, size_t size) const { return mum_hash(data, size, 0x1234); }
 };
@@ -284,6 +286,26 @@ struct HasherSipRef : public Hasher64Bit
 struct HasherCRC32 : public Hasher32Bit
 {
 	HashType operator()(const void* data, size_t size) const { HashType res; crc32(data, (int)size, 0x1234, &res); return res; }
+};
+struct HasherMD5_32 : public Hasher32Bit
+{
+	HashType operator()(const void* data, size_t size) const
+	{
+		// Could do this on Apple platforms, from <CommonCrypto/CommonDigest.h> -- quick test
+		// shows that it's around 25% faster, but that does not change things much.
+		//uint32_t res[4]; CC_MD5(data, (unsigned int)size, (unsigned char*)res); return res[0];
+		HashType res; md5_32(data, (int)size, 0x1234, &res); return res;
+	}
+};
+struct HasherSHA1_32 : public Hasher32Bit
+{
+	HashType operator()(const void* data, size_t size) const
+	{
+		// Could do this on Apple platforms, from <CommonCrypto/CommonDigest.h> -- quick test
+		// shows that it's around 25% faster, but that does not change things much.
+		//uint32_t res[5]; CC_SHA1(data, (unsigned int)size, (unsigned char*)res); return res[0];
+		HashType res; sha1_32a(data, (int)size, 0x1234, &res); return res;
+	}
 };
 
 
@@ -398,6 +420,8 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	ADDHASH("Farm64-32", HasherFarm64_32);
 	ADDHASH("SipRef-32", HasherSipRef_32);
 	ADDHASH("CRC32", HasherCRC32);
+	ADDHASH("MD5-32", HasherMD5_32);
+	ADDHASH("SHA1-32", HasherSHA1_32);
 	ADDHASH("FNV-1a", FNV1aHash);
 	ADDHASH("FNV-1amod", FNV1aModifiedHash);
 	ADDHASH("djb2", djb2_hash);
@@ -409,7 +433,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	ADDHASH("xxHash64", HasherXXH64);
 	ADDHASH("SpookyV2-64", HasherSpookyV2_64);
 	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128);
-	ADDHASH("Mum", HasherMum_64);
+	ADDHASH("Mum", HasherMum);
 	ADDHASH("City64", HasherCity64);
 	ADDHASH("Farm64", HasherFarm64);
 	ADDHASH("SipRef", HasherSipRef);
