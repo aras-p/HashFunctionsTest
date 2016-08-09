@@ -352,15 +352,17 @@ struct HashToTest
 	const char* name;
 	TestHashQualityFunc qualityFunc;
 	TestHashPerfFunc perfFunc;
+	bool excludeFromPerf;
 };
 static std::vector<HashToTest> g_Hashes;
 
-static void AddHash(const char* name, TestHashQualityFunc qualityFunc, TestHashPerfFunc perfFunc)
+static void AddHash(const char* name, TestHashQualityFunc qualityFunc, TestHashPerfFunc perfFunc, bool excludeFromPerf)
 {
 	HashToTest h;
 	h.name = name;
 	h.qualityFunc = qualityFunc;
 	h.perfFunc = perfFunc;
+	h.excludeFromPerf = excludeFromPerf;
 	g_Hashes.push_back(h);
 }
 
@@ -408,9 +410,11 @@ static void PrintResults()
 
 	fprintf(g_OutputFile, "\n**** Performance evaluation, MB/s\n");
 	fprintf(g_OutputFile, "DataSize,");
-	for (size_t ia = 0; ia < g_Results.size(); ++ia)
+	for (size_t ia = 0; ia < g_Hashes.size(); ++ia)
 	{
-		fprintf(g_OutputFile, "%s,", g_Results[ia].name.c_str());
+		if (g_Hashes[ia].excludeFromPerf)
+			continue;
+		fprintf(g_OutputFile, "%s,", g_Hashes[ia].name);
 	}
 	fprintf(g_OutputFile, "\n");
 	for (size_t is = 0; is < g_Results[0].mbpsPerLength.size(); ++is)
@@ -418,6 +422,8 @@ static void PrintResults()
 		fprintf(g_OutputFile, "%i,", g_Results[0].mbpsPerLength[is].length);
 		for (size_t ia = 0; ia < g_Results.size(); ++ia)
 		{
+			if (g_Hashes[ia].excludeFromPerf)
+				continue;
 			fprintf(g_OutputFile, "%i,", (int)g_Results[ia].mbpsPerLength[is].mbps);
 		}
 		fprintf(g_OutputFile, "\n");
@@ -426,9 +432,11 @@ static void PrintResults()
 
 	fprintf(g_OutputFile, "\n**** Aligned data performance evaluation, MB/s\n");
 	fprintf(g_OutputFile, "DataSize,");
-	for (size_t ia = 0; ia < g_Results.size(); ++ia)
+	for (size_t ia = 0; ia < g_Hashes.size(); ++ia)
 	{
-		fprintf(g_OutputFile, "%s,", g_Results[ia].name.c_str());
+		if (g_Hashes[ia].excludeFromPerf)
+			continue;
+		fprintf(g_OutputFile, "%s,", g_Hashes[ia].name);
 	}
 	fprintf(g_OutputFile, "\n");
 	for (size_t is = 0; is < g_Results[0].mbpsPerLength.size(); ++is)
@@ -436,6 +444,8 @@ static void PrintResults()
 		fprintf(g_OutputFile, "%i,", g_Results[0].mbpsPerLength[is].length);
 		for (size_t ia = 0; ia < g_Results.size(); ++ia)
 		{
+			if (g_Hashes[ia].excludeFromPerf)
+				continue;
 			fprintf(g_OutputFile, "%i,", (int)g_Results[ia].mbpsPerLength[is].mbpsAligned);
 		}
 		fprintf(g_OutputFile, "\n");
@@ -452,37 +462,37 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	g_Results.reserve(50);
 	
 	// setup hash functions to test
-#	define ADDHASH(name,clazz) AddHash(name, TestQualityOnDataSet<clazz>, TestPerformancePerLength<clazz>)
+#	define ADDHASH(name,clazz,exclude) AddHash(name, TestQualityOnDataSet<clazz>, TestPerformancePerLength<clazz>, exclude)
 
 	// 32 bit hashes
-	ADDHASH("xxHash32", HasherXXH32);
-	ADDHASH("xxHash64-32", HasherXXH64_32);
-	ADDHASH("Murmur2A", HasherMurmur2A);
-	ADDHASH("Murmur3-32", HasherMurmur3_32);
-	ADDHASH("Mum-32", HasherMum_32);
-	ADDHASH("City32", HasherCity32);
-	ADDHASH("City64-32", HasherCity64_32);
-	ADDHASH("Farm32", HasherFarm32);
-	ADDHASH("Farm64-32", HasherFarm64_32);
-	ADDHASH("SipRef-32", HasherSipRef_32);
-	ADDHASH("CRC32", HasherCRC32);
-	ADDHASH("MD5-32", HasherMD5_32);
-	ADDHASH("SHA1-32", HasherSHA1_32);
-	ADDHASH("FNV-1a", FNV1aHash);
-	ADDHASH("FNV-1amod", FNV1aModifiedHash);
-	ADDHASH("djb2", djb2_hash);
-	ADDHASH("SDBM", SDBM_hash);
-	ADDHASH("ELFLikeBadHash", ELF_Like_Bad_Hash);
+	ADDHASH("xxHash32", HasherXXH32, 0);
+	ADDHASH("xxHash64-32", HasherXXH64_32, 1);
+	ADDHASH("Murmur2A", HasherMurmur2A, 0);
+	ADDHASH("Murmur3-32", HasherMurmur3_32, 0);
+	ADDHASH("Mum-32", HasherMum_32, 1);
+	ADDHASH("City32", HasherCity32, 0);
+	ADDHASH("City64-32", HasherCity64_32, 1);
+	ADDHASH("Farm32", HasherFarm32, 0);
+	ADDHASH("Farm64-32", HasherFarm64_32, 1);
+	ADDHASH("SipRef-32", HasherSipRef_32, 1);
+	ADDHASH("CRC32", HasherCRC32, 0);
+	ADDHASH("MD5-32", HasherMD5_32, 0);
+	ADDHASH("SHA1-32", HasherSHA1_32, 0);
+	ADDHASH("FNV-1a", FNV1aHash, 0);
+	ADDHASH("FNV-1amod", FNV1aModifiedHash, 0);
+	ADDHASH("djb2", djb2_hash, 0);
+	ADDHASH("SDBM", SDBM_hash, 0);
+	ADDHASH("ELFLikeBadHash", ELF_Like_Bad_Hash, 1);
 
 	// 64 bit hashes
 	
-	ADDHASH("xxHash64", HasherXXH64);
-	ADDHASH("SpookyV2-64", HasherSpookyV2_64);
-	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128);
-	ADDHASH("Mum", HasherMum);
-	ADDHASH("City64", HasherCity64);
-	ADDHASH("Farm64", HasherFarm64);
-	ADDHASH("SipRef", HasherSipRef);
+	ADDHASH("xxHash64", HasherXXH64, 0);
+	ADDHASH("SpookyV2-64", HasherSpookyV2_64, 0);
+	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128, 0);
+	ADDHASH("Mum", HasherMum, 0);
+	ADDHASH("City64", HasherCity64, 0);
+	ADDHASH("Farm64", HasherFarm64, 0);
+	ADDHASH("SipRef", HasherSipRef, 0);
 #	undef ADDHASH
 
 	// do quality evaluations on all hash functions
@@ -514,6 +524,8 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 		for (size_t i = 0; i < g_Hashes.size(); ++i)
 		{
 			const HashToTest& hash = g_Hashes[i];
+			if (hash.excludeFromPerf)
+				continue;
 			Result& res = g_Results[i];
 			hash.perfFunc(g_SyntheticData, false, res);
 		}
@@ -525,6 +537,8 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 		for (size_t i = 0; i < g_Hashes.size(); ++i)
 		{
 			const HashToTest& hash = g_Hashes[i];
+			if (hash.excludeFromPerf)
+				continue;
 			Result& res = g_Results[i];
 			hash.perfFunc(g_SyntheticData, true, res);
 		}
