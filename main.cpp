@@ -464,16 +464,23 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	// setup hash functions to test
 #	define ADDHASH(name,clazz,exclude) AddHash(name, TestQualityOnDataSet<clazz>, TestPerformancePerLength<clazz>, exclude)
 
-	// 32 bit hashes
-	ADDHASH("xxHash32", HasherXXH32, 0);
+	ADDHASH("xxHash64", HasherXXH64, 0);
 	ADDHASH("xxHash64-32", HasherXXH64_32, 1);
+	ADDHASH("City64", HasherCity64, 0);
+	ADDHASH("City64-32", HasherCity64_32, 1);
+	ADDHASH("Mum", HasherMum, 0);
+	ADDHASH("Farm64", HasherFarm64, 0);
+	ADDHASH("Farm64-32", HasherFarm64_32, 1);
+	ADDHASH("SpookyV2-64", HasherSpookyV2_64, 0);
+
+	ADDHASH("xxHash32", HasherXXH32, 0);
+	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128, 0);
 	ADDHASH("Murmur2A", HasherMurmur2A, 0);
 	ADDHASH("Murmur3-32", HasherMurmur3_32, 0);
 	ADDHASH("Mum-32", HasherMum_32, 1);
 	ADDHASH("City32", HasherCity32, 0);
-	ADDHASH("City64-32", HasherCity64_32, 1);
 	ADDHASH("Farm32", HasherFarm32, 0);
-	ADDHASH("Farm64-32", HasherFarm64_32, 1);
+	ADDHASH("SipRef", HasherSipRef, 0);
 	ADDHASH("SipRef-32", HasherSipRef_32, 1);
 	ADDHASH("CRC32", HasherCRC32, 0);
 	ADDHASH("MD5-32", HasherMD5_32, 0);
@@ -484,15 +491,6 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	ADDHASH("SDBM", SDBM_hash, 0);
 	ADDHASH("ELFLikeBadHash", ELF_Like_Bad_Hash, 1);
 
-	// 64 bit hashes
-	
-	ADDHASH("xxHash64", HasherXXH64, 0);
-	ADDHASH("SpookyV2-64", HasherSpookyV2_64, 0);
-	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128, 0);
-	ADDHASH("Mum", HasherMum, 0);
-	ADDHASH("City64", HasherCity64, 0);
-	ADDHASH("Farm64", HasherFarm64, 0);
-	ADDHASH("SipRef", HasherSipRef, 0);
 #	undef ADDHASH
 
 	// do quality evaluations on all hash functions
