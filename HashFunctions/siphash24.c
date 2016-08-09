@@ -74,6 +74,9 @@
 #define TRACE
 #endif
 
+#ifdef __cplusplus
+extern "C"
+#endif
 int siphash(uint8_t *out, const uint8_t *in, uint64_t inlen, const uint8_t *k) {
   /* "somepseudorandomlygeneratedbytes" */
   uint64_t v0 = 0x736f6d6570736575ULL;

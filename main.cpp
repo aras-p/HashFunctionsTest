@@ -43,8 +43,8 @@ struct DataSet
 static DataSet* ReadDataSet(const char* folderName, const char* filenameStr)
 {
 	std::string filename = std::string(filenameStr);
-#	if PLATFORM_IOS
-	filename.erase(0, 9); // remove TestData/ on iOS; files in resources only retain the filenames
+#	if PLATFORM_IOS || PLATFORM_XBOXONE
+	filename.erase(0, 9); // remove TestData/ on iOS/XB1; files in resources only retain the filenames
 #	endif
 
 	std::string fullPath = std::string(folderName) + filename;
