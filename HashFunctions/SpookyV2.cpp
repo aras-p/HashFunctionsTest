@@ -12,7 +12,11 @@
 #include "SpookyV2.h"
 #include <string.h>
 
+#if defined(__arm__) && !defined(__aarch64__)
+#define ALLOW_UNALIGNED_READS 0
+#else
 #define ALLOW_UNALIGNED_READS 1
+#endif
 
 //
 // short hash ... it could be used on any message, 
