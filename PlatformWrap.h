@@ -33,6 +33,15 @@
 #	define PLATFORM_PS4 1
 #endif
 
+#if defined(__ANDROID__)
+#	include <android/native_activity.h>
+#	include <android/asset_manager.h>
+#	include <android_native_app_glue.h>
+#	include <android/log.h>
+#	include <chrono>
+#	define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "hashTest", __VA_ARGS__))
+#	define PLATFORM_ANDROID 1
+#endif
 
 // ------------------------------------------------------------------------------------
 // Misc
@@ -104,6 +113,21 @@
 
 #elif PLATFORM_PS4
 	// CENSORED
+
+#elif PLATFORM_ANDROID	
+	// Use std::chrono
+	static std::chrono::high_resolution_clock::time_point s_Time0;
+	static void TimerBegin()
+	{
+		s_Time0 = std::chrono::high_resolution_clock::now();
+	}
+	static float TimerEnd()
+	{
+		static bool timerInited = false;
+		std::chrono::high_resolution_clock::time_point ttt1;
+		ttt1 = std::chrono::high_resolution_clock::now();		
+		return std::chrono::duration<double, std::milli>(ttt1 - s_Time0).count() / 1000.0;
+	}		
 
 #else
 	#error "Unknown platform, timer code missing"

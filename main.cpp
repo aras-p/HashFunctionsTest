@@ -17,6 +17,9 @@
 #include <stdio.h>
 #include <math.h>
 
+#if PLATFORM_ANDROID
+android_app* g_AndroidApp;
+#endif
 
 FILE* g_OutputFile = stdout;
 
@@ -47,6 +50,7 @@ static DataSet* ReadDataSet(const char* folderName, const char* filenameStr)
 	filename.erase(0, 9); // remove TestData/ on iOS/XB1; files in resources only retain the filenames
 #	endif
 
+#	if !PLATFORM_ANDROID
 	std::string fullPath = std::string(folderName) + filename;
 	FILE* f = fopen(fullPath.c_str(), "rb");
 	if (!f)
@@ -54,9 +58,19 @@ static DataSet* ReadDataSet(const char* folderName, const char* filenameStr)
 		fprintf(g_OutputFile, "error: can't open dataset file '%s'\n", filename.c_str());
 		return NULL;
 	}
+#	else
+	AAsset* asset = AAssetManager_open(g_AndroidApp->activity->assetManager, filename.c_str(), AASSET_MODE_STREAMING);
+	if (!asset)
+	{
+		fprintf(g_OutputFile, "error: can't open dataset file '%s'\n", filename.c_str());
+		return NULL;	
+	}
+#	endif	
+
 	DataSet* data = new DataSet();
 	data->name = filename;
 
+#	if !PLATFORM_ANDROID
 	fseek(f, 0, SEEK_END);
 	size_t size = ftell(f);
 	fseek(f, 0, SEEK_SET);
@@ -64,6 +78,16 @@ static DataSet* ReadDataSet(const char* folderName, const char* filenameStr)
 	data->buffer.resize(size);
 	char* buffer = data->buffer.data();
 	fread(buffer, size, 1, f);
+#	else
+	size_t size = AAsset_getLength(asset);
+	assert(size > 0);
+
+	data->buffer.resize(size);
+	char* buffer = data->buffer.data();
+
+	AAsset_read(asset, buffer, size);
+	AAsset_close(asset);
+#	endif
 
 	size_t pos = 0;
 	size_t wordStart = 0;
@@ -83,7 +107,9 @@ static DataSet* ReadDataSet(const char* folderName, const char* filenameStr)
 		++pos;
 	}
 	
+#if !PLATFORM_ANDROID	
 	fclose(f);
+#endif	
 	return data;
 }
 
@@ -558,7 +584,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 
 
 // iOS & XB1 has main entry points elsewhere
-#if !PLATFORM_IOS && !PLATFORM_XBOXONE
+#if !PLATFORM_IOS && !PLATFORM_XBOXONE && !PLATFORM_ANDROID
 
 int main()
 {
@@ -571,5 +597,55 @@ int main()
 	return 0;
 }
 
-#endif // #if !PLATFORM_IOS && !PLATFORM_XBOXONE
+#endif // #if !PLATFORM_IOS && !PLATFORM_XBOXONE && !PLATFORM_ANDROID
 
+// Android main entry points
+#if PLATFORM_ANDROID
+void handleAppCommand(android_app * app, int32_t cmd)
+{
+	switch (cmd)
+	{
+	case APP_CMD_INIT_WINDOW:
+		// Application startup
+		{
+			LOGI("Starting");			
+			std::string appPath;
+			appPath = "/sdcard/hashtest_android_results.txt";
+			g_OutputFile = fopen(appPath.c_str(), "w+");
+			HashFunctionsTestEntryPoint("");
+			fflush(g_OutputFile);
+			fclose(g_OutputFile);
+			LOGI("Finished");			
+			ANativeActivity_finish(g_AndroidApp->activity);				
+		}		
+		break;
+	}
+}
+void android_main(android_app* state)
+{
+	app_dummy();
+	g_AndroidApp = state;
+	state->onAppCmd = handleAppCommand;
+	bool destroy = false;
+
+	while(1)
+	{
+		int ident, events;
+		struct android_poll_source* source;
+		while ((ident = ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0)
+		{
+			if (source != NULL)
+			{
+				source->process(g_AndroidApp, source);
+			}
+			if (g_AndroidApp->destroyRequested != 0)
+			{
+				destroy = true;
+				break;
+			}
+		}
+		if (destroy)
+			break;
+	}
+}
+#endif // #if PLATFORM_ANDROID
