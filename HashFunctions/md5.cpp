@@ -1,6 +1,9 @@
 #include <memory.h>
 //#include "Types.h"
 #include <stdint.h>
+#if defined(__ANDROID__)
+#include <string>
+#endif
 
 // "Derived from the RSA Data Security, Inc. MD5 Message Digest Algorithm"
 
