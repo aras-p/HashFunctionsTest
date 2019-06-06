@@ -10,6 +10,7 @@
 #include "HashFunctions/SpookyV2.h"
 #define XXH_INLINE_ALL
 #include "HashFunctions/xxhash.h"
+#include "HashFunctions/meow_hash_x64_aesni.h"
 
 #include <vector>
 #include <string>
@@ -288,6 +289,11 @@ struct HasherXXH3_64 : public Hasher64Bit
     HashType operator()(const void* data, size_t size) const { return XXH3_64bits_withSeed(data, size, 0x1234); }
 };
 
+struct HasherMeow_64 : public Hasher64Bit
+{
+    HashType operator()(const void* data, size_t size) const { meow_u128 h = MeowHash(MeowDefaultSeed, size, (void*)data); return MeowU64From(h, 0); }
+};
+
 struct HasherSpookyV2_64 : public Hasher64Bit
 {
 	HashType operator()(const void* data, size_t size) const { return SpookyHash::Hash64(data, (int)size, 0x1234); }
@@ -505,6 +511,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	// setup hash functions to test
 #	define ADDHASH(name,clazz,exclude) AddHash(name, TestQualityOnDataSet<clazz>, TestPerformancePerLength<clazz>, exclude)
 
+    ADDHASH("Meow-64", HasherMeow_64, 0);
     ADDHASH("XXH3-64", HasherXXH3_64, 0);
 	ADDHASH("xxHash64", HasherXXH64, 0);
 	ADDHASH("xxHash64-32", HasherXXH64_32, 1);
