@@ -8,6 +8,7 @@
 #include "HashFunctions/SimpleHashFunctions.h"
 #include "HashFunctions/sha1.h"
 #include "HashFunctions/SpookyV2.h"
+#define XXH_INLINE_ALL
 #include "HashFunctions/xxhash.h"
 
 #include <vector>
@@ -282,6 +283,10 @@ struct HasherXXH64 : public Hasher64Bit
 {
 	HashType operator()(const void* data, size_t size) const { return XXH64(data, size, 0x1234); }
 };
+struct HasherXXH3_64 : public Hasher64Bit
+{
+    HashType operator()(const void* data, size_t size) const { return XXH3_64bits_withSeed(data, size, 0x1234); }
+};
 
 struct HasherSpookyV2_64 : public Hasher64Bit
 {
@@ -500,6 +505,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	// setup hash functions to test
 #	define ADDHASH(name,clazz,exclude) AddHash(name, TestQualityOnDataSet<clazz>, TestPerformancePerLength<clazz>, exclude)
 
+    ADDHASH("XXH3-64", HasherXXH3_64, 0);
 	ADDHASH("xxHash64", HasherXXH64, 0);
 	ADDHASH("xxHash64-32", HasherXXH64_32, 1);
 	ADDHASH("City64", HasherCity64, 0);

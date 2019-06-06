@@ -58,6 +58,7 @@
 		2B8969DF1D59B32100B4E31C /* sha1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sha1.cpp; path = HashFunctions/sha1.cpp; sourceTree = "<group>"; };
 		2B8969E01D59B32100B4E31C /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha1.h; path = HashFunctions/sha1.h; sourceTree = "<group>"; };
 		2B8969E31D59B37C00B4E31C /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = HashFunctions/Platform.h; sourceTree = "<group>"; };
+		2BAB03D422A968AC003D1770 /* xxh3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xxh3.h; path = HashFunctions/xxh3.h; sourceTree = "<group>"; };
 		2BC0A3411D506CE60018BED6 /* hashtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hashtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BC0A3571D506D270018BED6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2BC0A38B1D51BFD20018BED6 /* iOSHashTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSHashTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,6 +178,7 @@
 				2BC0EBB71D55DD7E0018BED6 /* siphash24.c */,
 				2BC0EB951D54A6F30018BED6 /* SpookyV2.cpp */,
 				2BC0EB961D54A6F30018BED6 /* SpookyV2.h */,
+				2BAB03D422A968AC003D1770 /* xxh3.h */,
 				2BC0EB971D54A6F30018BED6 /* xxhash.c */,
 				2BC0EB981D54A6F30018BED6 /* xxhash.h */,
 			);
