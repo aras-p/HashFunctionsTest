@@ -10,7 +10,13 @@
 #include "HashFunctions/SpookyV2.h"
 #define XXH_INLINE_ALL
 #include "HashFunctions/xxhash.h"
+
+#if __x86_64__ || _M_AMD64 || __i386__  || _M_IX86
+#define MEOW_AVAILABLE 1
+#endif
+#if MEOW_AVAILABLE
 #include "HashFunctions/meow_hash_x64_aesni.h"
+#endif
 
 #include <vector>
 #include <string>
@@ -202,11 +208,7 @@ void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResu
 
 
 const size_t kSyntheticDataTotalSize = 1024 * 1024 * 1;
-#if PLATFORM_WEBGL
-const int kSyntheticDataIterations = 3;
-#else
 const int kSyntheticDataIterations = 9;
-#endif
 
 
 
@@ -238,7 +240,7 @@ void TestPerformancePerLength(const std::vector<uint8_t>& data, bool aligned, Re
 		float sec = TimerEnd();
 
 		// MB/s
-		float mbps = (float)((totalBytes / 1024.0 / 1024.0) / sec);
+		float mbps = (float)((totalBytes / 1024.0 / 1024.0) / (sec+1.0e-20f));
 		if (index < outResult.mbpsPerLength.size())
 		{
 			// if we got higher MB/s, use that (i.e. out of all iterations, we pick fastest one)
@@ -289,10 +291,12 @@ struct HasherXXH3_64 : public Hasher64Bit
     HashType operator()(const void* data, size_t size) const { return XXH3_64bits_withSeed(data, size, 0x1234); }
 };
 
+#if MEOW_AVAILABLE
 struct HasherMeow_64 : public Hasher64Bit
 {
     HashType operator()(const void* data, size_t size) const { meow_u128 h = MeowHash(MeowDefaultSeed, size, (void*)data); return MeowU64From(h, 0); }
 };
+#endif
 
 struct HasherSpookyV2_64 : public Hasher64Bit
 {
@@ -511,7 +515,9 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	// setup hash functions to test
 #	define ADDHASH(name,clazz,exclude) AddHash(name, TestQualityOnDataSet<clazz>, TestPerformancePerLength<clazz>, exclude)
 
+#if MEOW_AVAILABLE
     ADDHASH("Meow-64", HasherMeow_64, 0);
+#endif
     ADDHASH("XXH3-64", HasherXXH3_64, 0);
 	ADDHASH("xxHash64", HasherXXH64, 0);
 	ADDHASH("xxHash64-32", HasherXXH64_32, 1);

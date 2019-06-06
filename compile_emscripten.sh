@@ -1,2 +1,4 @@
 #/usr/bin/bash
-~/unity/graphics/External/Emscripten/Emscripten/builds/emcc -O2 main.cpp HashFunctions/*.cpp HashFunctions/*.c HashFunctions/*.cc -o emscripten.html -s TOTAL_MEMORY=268435456 --preload-file TestData/test-words.txt --preload-file TestData/test-filenames.txt --preload-file TestData/test-binary.bin
+# note: needs 'source ~/proj/other/emsdk/emsdk_env.sh'
+# note: set privacy.reduceTimerPrecision to false in about:config on Firefox
+emcc -O2 main.cpp HashFunctions/*.cpp HashFunctions/*.c HashFunctions/*.cc -o emscripten.html -s TOTAL_MEMORY=268435456 --preload-file TestData/test-words.txt --preload-file TestData/test-filenames.txt --preload-file TestData/test-binary.bin -s WASM=1
