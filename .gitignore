@@ -6,6 +6,11 @@ vs2017/build
 *.sdf
 *.vcxproj.user
 
+*.exe
+*.pdb
+*.ipdb
+*.iobj
+
 xboxone/Durango
 xboxone/build
 xboxone/ipch
