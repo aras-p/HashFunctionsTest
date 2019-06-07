@@ -1,6 +1,6 @@
 test-code.txt
 
-vs2015/build
+vs2017/build
 .vs
 *.VC.opendb
 *.sdf
