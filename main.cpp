@@ -10,6 +10,7 @@
 #include "HashFunctions/SpookyV2.h"
 #define XXH_INLINE_ALL
 #include "HashFunctions/xxhash.h"
+#include "HashFunctions/t1ha.h"
 
 #if __x86_64__ || _M_AMD64 || __i386__  || _M_IX86
 #define MEOW_AVAILABLE 1
@@ -298,6 +299,12 @@ struct HasherMeow_64 : public Hasher64Bit
 };
 #endif
 
+struct HasherT1HA2_64 : public Hasher64Bit
+{
+	HashType operator()(const void* data, size_t size) const { return t1ha2_atonce(data, size, 0x1234); }
+};
+
+
 struct HasherSpookyV2_64 : public Hasher64Bit
 {
 	HashType operator()(const void* data, size_t size) const { return SpookyHash::Hash64(data, (int)size, 0x1234); }
@@ -521,12 +528,13 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
     ADDHASH("XXH3-64", HasherXXH3_64, 0);
 	ADDHASH("xxHash64", HasherXXH64, 0);
 	ADDHASH("xxHash64-32", HasherXXH64_32, 1);
+	ADDHASH("t1ha2-64", HasherT1HA2_64, 0);
+	ADDHASH("SpookyV2-64", HasherSpookyV2_64, 0);
 	ADDHASH("City64", HasherCity64, 0);
 	ADDHASH("City64-32", HasherCity64_32, 1);
 	ADDHASH("Mum", HasherMum, 0);
 	ADDHASH("Farm64", HasherFarm64, 0);
 	ADDHASH("Farm64-32", HasherFarm64_32, 1);
-	ADDHASH("SpookyV2-64", HasherSpookyV2_64, 0);
 
 	ADDHASH("xxHash32", HasherXXH32, 0);
 	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128, 0);

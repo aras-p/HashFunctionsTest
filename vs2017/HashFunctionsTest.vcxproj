@@ -168,6 +168,7 @@
     <ClCompile Include="..\HashFunctions\md5.cpp" />
     <ClCompile Include="..\HashFunctions\sha1.cpp" />
     <ClCompile Include="..\HashFunctions\siphash24.c" />
+    <ClCompile Include="..\HashFunctions\t1ha_src\t1ha2.c" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\HashFunctions\MurmurHash2.cpp" />
     <ClCompile Include="..\HashFunctions\MurmurHash3.cpp" />
@@ -177,6 +178,7 @@
   <ItemGroup>
     <ClInclude Include="..\HashFunctions\city.h" />
     <ClInclude Include="..\HashFunctions\farmhash.h" />
+    <ClInclude Include="..\HashFunctions\meow_hash_x64_aesni.h" />
     <ClInclude Include="..\HashFunctions\mum.h" />
     <ClInclude Include="..\HashFunctions\MurmurHash2.h" />
     <ClInclude Include="..\HashFunctions\MurmurHash3.h" />
@@ -184,6 +186,9 @@
     <ClInclude Include="..\HashFunctions\sha1.h" />
     <ClInclude Include="..\HashFunctions\SimpleHashFunctions.h" />
     <ClInclude Include="..\HashFunctions\SpookyV2.h" />
+    <ClInclude Include="..\HashFunctions\t1ha.h" />
+    <ClInclude Include="..\HashFunctions\t1ha_src\t1ha_bits.h" />
+    <ClInclude Include="..\HashFunctions\xxh3.h" />
     <ClInclude Include="..\HashFunctions\xxhash.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

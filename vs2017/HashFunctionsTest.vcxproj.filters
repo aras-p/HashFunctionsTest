@@ -32,6 +32,9 @@
     <ClCompile Include="..\HashFunctions\siphash24.c">
       <Filter>HashFunctions</Filter>
     </ClCompile>
+    <ClCompile Include="..\HashFunctions\t1ha_src\t1ha2.c">
+      <Filter>HashFunctions\t1ha_src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\HashFunctions\MurmurHash2.h">
@@ -64,10 +67,25 @@
     <ClInclude Include="..\HashFunctions\SimpleHashFunctions.h">
       <Filter>HashFunctions</Filter>
     </ClInclude>
+    <ClInclude Include="..\HashFunctions\meow_hash_x64_aesni.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\t1ha.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\xxh3.h">
+      <Filter>HashFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HashFunctions\t1ha_src\t1ha_bits.h">
+      <Filter>HashFunctions\t1ha_src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HashFunctions">
       <UniqueIdentifier>{828b463b-181b-465a-b2df-8238f2bdb7e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HashFunctions\t1ha_src">
+      <UniqueIdentifier>{90f88226-1050-457a-9b1d-f0e78cd4c3e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
