@@ -12,6 +12,8 @@
 		2B8969E41D59B97A00B4E31C /* sha1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B8969DF1D59B32100B4E31C /* sha1.cpp */; };
 		2B8969E51D59B98000B4E31C /* siphash24.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0EBB71D55DD7E0018BED6 /* siphash24.c */; };
 		2B8969E61D59B98F00B4E31C /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B8969DE1D59B32100B4E31C /* md5.cpp */; };
+		2BAB03DB22AA5725003D1770 /* t1ha2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BAB03D822AA5725003D1770 /* t1ha2.c */; };
+		2BAB03DC22AA5725003D1770 /* t1ha2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BAB03D822AA5725003D1770 /* t1ha2.c */; };
 		2BC0A3581D506D270018BED6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A3571D506D270018BED6 /* main.cpp */; };
 		2BC0A38F1D51BFD20018BED6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A38E1D51BFD20018BED6 /* main.m */; };
 		2BC0A3921D51BFD20018BED6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC0A3911D51BFD20018BED6 /* AppDelegate.m */; };
@@ -60,6 +62,10 @@
 		2B8969E31D59B37C00B4E31C /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Platform.h; path = HashFunctions/Platform.h; sourceTree = "<group>"; };
 		2BAB03D422A968AC003D1770 /* xxh3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xxh3.h; path = HashFunctions/xxh3.h; sourceTree = "<group>"; };
 		2BAB03D522A96C18003D1770 /* meow_hash_x64_aesni.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = meow_hash_x64_aesni.h; path = HashFunctions/meow_hash_x64_aesni.h; sourceTree = "<group>"; };
+		2BAB03D722AA5725003D1770 /* t1ha_selfcheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t1ha_selfcheck.h; sourceTree = "<group>"; };
+		2BAB03D822AA5725003D1770 /* t1ha2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = t1ha2.c; sourceTree = "<group>"; };
+		2BAB03D922AA5725003D1770 /* t1ha_bits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t1ha_bits.h; sourceTree = "<group>"; };
+		2BAB03DA22AA5725003D1770 /* t1ha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = t1ha.h; path = HashFunctions/t1ha.h; sourceTree = "<group>"; };
 		2BC0A3411D506CE60018BED6 /* hashtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hashtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BC0A3571D506D270018BED6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		2BC0A38B1D51BFD20018BED6 /* iOSHashTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSHashTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +119,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2BAB03D622AA5725003D1770 /* t1ha_src */ = {
+			isa = PBXGroup;
+			children = (
+				2BAB03D722AA5725003D1770 /* t1ha_selfcheck.h */,
+				2BAB03D822AA5725003D1770 /* t1ha2.c */,
+				2BAB03D922AA5725003D1770 /* t1ha_bits.h */,
+			);
+			name = t1ha_src;
+			path = HashFunctions/t1ha_src;
+			sourceTree = "<group>";
+		};
 		2BC0A3381D506CE60018BED6 = {
 			isa = PBXGroup;
 			children = (
@@ -161,6 +178,8 @@
 		2BC0EB8C1D54A6E40018BED6 /* HashFunctions */ = {
 			isa = PBXGroup;
 			children = (
+				2BAB03D622AA5725003D1770 /* t1ha_src */,
+				2BAB03DA22AA5725003D1770 /* t1ha.h */,
 				2BC0EBAF1D54CEAA0018BED6 /* city.cc */,
 				2BC0EBB01D54CEAA0018BED6 /* city.h */,
 				2BC0EB8D1D54A6F30018BED6 /* crc.cpp */,
@@ -294,6 +313,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BAB03DB22AA5725003D1770 /* t1ha2.c in Sources */,
 				2BC0EB991D54A6F30018BED6 /* crc.cpp in Sources */,
 				2BC0EBB51D54D6A40018BED6 /* farmhash.cc in Sources */,
 				2BC0EB9D1D54A6F30018BED6 /* xxhash.c in Sources */,
@@ -324,6 +344,7 @@
 				2BC0A3A61D51BFEE0018BED6 /* main.cpp in Sources */,
 				2BC0EBA91D54ABD70018BED6 /* MurmurHash2.cpp in Sources */,
 				2BC0EBAC1D54ABD70018BED6 /* xxhash.c in Sources */,
+				2BAB03DC22AA5725003D1770 /* t1ha2.c in Sources */,
 				2B8969E61D59B98F00B4E31C /* md5.cpp in Sources */,
 				2BC0A38F1D51BFD20018BED6 /* main.m in Sources */,
 			);
