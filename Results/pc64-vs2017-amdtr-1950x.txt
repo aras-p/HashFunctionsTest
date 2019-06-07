@@ -1,0 +1,93 @@
+Loading data
+Doing quality evals...
+  Meow-128 XXH3-128 t1ha2-128 SpookyV2-128
+Doing performance evals...
+  iter 1/9
+  iter 2/9
+  iter 3/9
+  iter 4/9
+  iter 5/9
+  iter 6/9
+  iter 7/9
+  iter 8/9
+  iter 9/9
+  aligned data...
+  iter 1/9
+  iter 2/9
+  iter 3/9
+  iter 4/9
+  iter 5/9
+  iter 6/9
+  iter 7/9
+  iter 8/9
+  iter 9/9
+**** Quality evaluation
+TestData/test-words.txt, 235886 entries, 2.2 MB size, avg length 9.6
+HashAlgorithm   Colis HTColsIncrease hashsum
+       Meow-128    0      0           5d6c234c45fe5e2e
+       XXH3-128    0      0           1e17873f3bc394e5
+      t1ha2-128    0      0           296863a10df4b7d7
+   SpookyV2-128    0      0           3c0bfdedc519d992
+TestData/test-filenames.txt, 101152 entries, 5.5 MB size, avg length 56.8
+HashAlgorithm   Colis HTColsIncrease hashsum
+       Meow-128    0      0           bb2d44ebf422668e
+       XXH3-128    0      0           aa6407e89c9472c5
+      t1ha2-128    0      0           7125260244230f8c
+   SpookyV2-128    0      0           1f3018ac8193a215
+TestData/test-code.txt, 6069 entries, 43.7 MB size, avg length 7546.6
+HashAlgorithm   Colis HTColsIncrease hashsum
+       Meow-128    0      0           725ada62561e3dd0
+       XXH3-128    0      1           6e246ebc718cd41c
+      t1ha2-128    0      0           b10d70db92d799ad
+   SpookyV2-128    0      1           6ddb5859d0bdbdec
+TestData/test-binary.bin, 5742 entries, 0.3 MB size, avg length 54.6
+HashAlgorithm   Colis HTColsIncrease hashsum
+       Meow-128    0      0           1328b7a29fd57cdf
+       XXH3-128    0      0           786dcf340ae3da92
+      t1ha2-128    0      0           eb368e8da0f4000c
+   SpookyV2-128    0      2           40480dd866348a9e
+
+**** Performance evaluation, MB/s
+DataSize,Meow-128,XXH3-128,t1ha2-128,SpookyV2-128,
+2,145,196,256,295,
+4,289,379,503,619,
+7,505,663,898,965,
+11,756,1017,1282,1550,
+17,1145,1560,1837,1422,
+26,1777,2387,2747,2104,
+39,2593,3322,3817,3089,
+58,3862,4876,4876,3092,
+86,5311,6739,6373,3400,
+128,7528,9822,9622,4004,
+191,10100,5961,10100,4186,
+285,14782,7372,11731,6628,
+426,17733,9894,13318,7357,
+637,22785,12146,14364,9280,
+953,26362,14453,15326,11363,
+1427,30067,15033,15393,12421,
+2138,34277,16281,15884,13291,
+3204,35787,17322,16615,14283,
+4803,37157,18267,17030,14597,
+
+
+**** Aligned data performance evaluation, MB/s
+DataSize,Meow-128,XXH3-128,t1ha2-128,SpookyV2-128,
+2,146,195,236,295,
+4,291,380,474,617,
+7,507,665,896,963,
+11,801,1010,1299,1490,
+17,1238,1560,1848,1342,
+26,1891,2387,2730,1924,
+39,2631,3344,3788,2825,
+58,3928,4845,4845,2982,
+86,5388,6760,6266,3400,
+128,7562,9822,9539,4009,
+191,10193,5983,10100,4191,
+285,14782,7428,11731,6584,
+426,17733,9833,13431,7340,
+637,22785,11472,14364,9280,
+953,26791,13963,15255,11441,
+1427,30351,13807,15320,12469,
+2138,34642,14937,15884,13237,
+3204,35787,15886,16615,14221,
+4803,37584,16854,16942,14404,
