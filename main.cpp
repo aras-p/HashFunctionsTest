@@ -540,11 +540,8 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	ADDHASH("CRC32", HasherCRC32, 0);
 	ADDHASH("MD5-32", HasherMD5_32, 0);
 	ADDHASH("SHA1-32", HasherSHA1_32, 1);
-	ADDHASH("FNV-1a", FNV1aHash, 1);
 	ADDHASH("FNV-1amod", FNV1aModifiedHash, 1);
 	ADDHASH("djb2", djb2_hash, 0);
-	ADDHASH("SDBM", SDBM_hash, 1);
-	ADDHASH("ELFLikeBadHash", ELF_Like_Bad_Hash, 1);
 
 #	undef ADDHASH
 
