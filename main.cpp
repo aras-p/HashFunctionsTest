@@ -25,6 +25,7 @@
 #include <map>
 #include <stdio.h>
 #include <math.h>
+#include <inttypes.h>
 
 #if PLATFORM_ANDROID
 android_app* g_AndroidApp;
@@ -143,7 +144,7 @@ struct Result
 	struct DataSetResult
 	{
 		DataSetResult() : hashsum(0), collisions(0), hashtabCollisionsIncrease(0) { }
-		uint32_t hashsum;
+		uint64_t hashsum;
 		int collisions;
 		float hashtabCollisionsIncrease; // % of how much hashtable collisions we'd get, compared to an ideal hash
 	};
@@ -160,7 +161,7 @@ struct Result
 	std::string name;
 	std::vector<PerfResult> mbpsPerLength;
 	std::vector<DataSetResult> datasets;
-	uint32_t hashsum;
+	uint64_t hashsum;
 };
 
 
@@ -194,7 +195,7 @@ void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResu
 	for (size_t i = 0; i != entryCount; ++i)
 	{
 		typename Hasher::HashType h = hasher(dataset.buffer.data() + dataset.entries[i].first, dataset.entries[i].second);
-		outResult.hashsum ^= (uint32_t)h;
+		outResult.hashsum = h ^ outResult.hashsum;
 		uniq.insert(h);
 		uniqModulo.insert(h % hashtableSize);
 	}
@@ -234,7 +235,7 @@ void TestPerformancePerLength(const std::vector<uint8_t>& data, bool aligned, Re
 		size_t totalBytes = 0;
 		while (pos + len < dataLen)
 		{
-			outResult.hashsum ^= hasher(dataPtr + pos, len);
+			outResult.hashsum = hasher(dataPtr + pos, len) ^ outResult.hashsum;
 			pos += lenAligned;
 			totalBytes += len;
 		}
@@ -291,20 +292,36 @@ struct HasherXXH3_64 : public Hasher64Bit
 {
     HashType operator()(const void* data, size_t size) const { return XXH3_64bits_withSeed(data, size, 0x1234); }
 };
+struct HasherXXH3_128 : public Hasher128Bit
+{
+	HashType operator()(const void* data, size_t size) const { XXH128_hash_t r = XXH3_128bits_withSeed(data, size, 0x1234); return myuint128_t(r.low64, r.high64); }
+};
 
 #if MEOW_AVAILABLE
+struct HasherMeow_128 : public Hasher128Bit
+{
+	HashType operator()(const void* data, size_t size) const { meow_u128 h = MeowHash(MeowDefaultSeed, size, (void*)data); return myuint128_t(MeowU64From(h, 0), MeowU64From(h, 1)); }
+};
 struct HasherMeow_64 : public Hasher64Bit
 {
     HashType operator()(const void* data, size_t size) const { meow_u128 h = MeowHash(MeowDefaultSeed, size, (void*)data); return MeowU64From(h, 0); }
 };
 #endif
 
+struct HasherT1HA2_128 : public Hasher128Bit
+{
+	HashType operator()(const void* data, size_t size) const { myuint128_t r; r.a = t1ha2_atonce128(&r.b, data, size, 0x1234); return r; }
+};
 struct HasherT1HA2_64 : public Hasher64Bit
 {
 	HashType operator()(const void* data, size_t size) const { return t1ha2_atonce(data, size, 0x1234); }
 };
 
 
+struct HasherSpookyV2_128 : public Hasher128Bit
+{
+	HashType operator()(const void* data, size_t size) const { myuint128_t r; r.a = 0x1234; r.b = 0; SpookyHash::Hash128(data, (int)size, &r.a, &r.b); return r; }
+};
 struct HasherSpookyV2_64 : public Hasher64Bit
 {
 	HashType operator()(const void* data, size_t size) const { return SpookyHash::Hash64(data, (int)size, 0x1234); }
@@ -318,9 +335,9 @@ struct HasherMurmur3_32 : public Hasher32Bit
 {
 	HashType operator()(const void* data, size_t size) const { HashType res; MurmurHash3_x86_32(data, (int)size, 0x1234, &res); return res; }
 };
-struct HasherMurmur3_x64_128 : public Hasher64Bit
+struct HasherMurmur3_x64_128 : public Hasher128Bit
 {
-	HashType operator()(const void* data, size_t size) const { HashType res[2]; MurmurHash3_x64_128(data, (int)size, 0x1234, &res); return res[0]; }
+	HashType operator()(const void* data, size_t size) const { myuint128_t r; MurmurHash3_x64_128(data, (int)size, 0x1234, &r); return r; }
 };
 
 struct HasherMum_32 : public Hasher32Bit
@@ -462,7 +479,7 @@ static void PrintResults()
 		for (size_t ia = 0; ia < g_Results.size(); ++ia)
 		{
 			const Result::DataSetResult& res = g_Results[ia].datasets[id];
-			fprintf(g_OutputFile, "%15s %4i %6i           %08x\n", g_Results[ia].name.c_str(), res.collisions, (int)res.hashtabCollisionsIncrease, res.hashsum);
+			fprintf(g_OutputFile, "%15s %4i %6i           %016" PRIx64 "\n", g_Results[ia].name.c_str(), res.collisions, (int)res.hashtabCollisionsIncrease, res.hashsum);
 		}
 	}
 
@@ -523,9 +540,17 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 #	define ADDHASH(name,clazz,exclude) AddHash(name, TestQualityOnDataSet<clazz>, TestPerformancePerLength<clazz>, exclude)
 
 #if MEOW_AVAILABLE
-    ADDHASH("Meow-64", HasherMeow_64, 0);
+	ADDHASH("Meow-128", HasherMeow_128, 0);
 #endif
-    ADDHASH("XXH3-64", HasherXXH3_64, 0);
+	ADDHASH("XXH3-128", HasherXXH3_128, 0);
+	ADDHASH("t1ha2-128", HasherT1HA2_128, 0);
+	ADDHASH("SpookyV2-128", HasherSpookyV2_128, 0);
+
+	/*
+#if MEOW_AVAILABLE
+	ADDHASH("Meow-64", HasherMeow_64, 0);
+#endif
+	ADDHASH("XXH3-64", HasherXXH3_64, 0);
 	ADDHASH("xxHash64", HasherXXH64, 0);
 	ADDHASH("xxHash64-32", HasherXXH64_32, 1);
 	ADDHASH("t1ha2-64", HasherT1HA2_64, 0);
@@ -537,7 +562,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	ADDHASH("Farm64-32", HasherFarm64_32, 1);
 
 	ADDHASH("xxHash32", HasherXXH32, 0);
-	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128, 0);
+	ADDHASH("Murmur3-X64-128", HasherMurmur3_x64_128, 0);
 	ADDHASH("Murmur2A", HasherMurmur2A, 1);
 	ADDHASH("Murmur3-32", HasherMurmur3_32, 1);
 	ADDHASH("Mum-32", HasherMum_32, 1);
@@ -550,6 +575,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	ADDHASH("SHA1-32", HasherSHA1_32, 1);
 	ADDHASH("FNV-1amod", FNV1aModifiedHash, 1);
 	ADDHASH("djb2", djb2_hash, 1);
+	*/
 
 #	undef ADDHASH
 

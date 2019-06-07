@@ -7,6 +7,21 @@
 
 struct Hasher32Bit { typedef uint32_t HashType; };
 struct Hasher64Bit { typedef uint64_t HashType; };
+struct myuint128_t {
+	uint64_t a, b;
+	myuint128_t(uint64_t a_=0, uint64_t b_=0) : a(a_), b(b_) {}
+
+	// not a good approx, but eh
+	uint64_t operator%(uint64_t sz) { return a % sz; }
+	uint64_t operator^(uint64_t sz) { return a ^ b ^ sz; }
+	bool operator<(const myuint128_t& o) const
+	{
+		if (a != o.a)
+			return a < o.a;
+		return b < o.b;
+	}
+};
+struct Hasher128Bit { typedef myuint128_t HashType; };
 
 
 // djb2 based on http://www.cse.yorku.ca/~oz/hash.html
