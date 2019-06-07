@@ -530,18 +530,18 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 
 	ADDHASH("xxHash32", HasherXXH32, 0);
 	ADDHASH("Murmur3-X64-64", HasherMurmur3_x64_128, 0);
-	ADDHASH("Murmur2A", HasherMurmur2A, 0);
-	ADDHASH("Murmur3-32", HasherMurmur3_32, 0);
+	ADDHASH("Murmur2A", HasherMurmur2A, 1);
+	ADDHASH("Murmur3-32", HasherMurmur3_32, 1);
 	ADDHASH("Mum-32", HasherMum_32, 1);
-	ADDHASH("City32", HasherCity32, 0);
-	ADDHASH("Farm32", HasherFarm32, 0);
-	ADDHASH("SipRef", HasherSipRef, 0);
+	ADDHASH("City32", HasherCity32, 1);
+	ADDHASH("Farm32", HasherFarm32, 1);
+	ADDHASH("SipRef", HasherSipRef, 1);
 	ADDHASH("SipRef-32", HasherSipRef_32, 1);
-	ADDHASH("CRC32", HasherCRC32, 0);
-	ADDHASH("MD5-32", HasherMD5_32, 0);
+	ADDHASH("CRC32", HasherCRC32, 1);
+	ADDHASH("MD5-32", HasherMD5_32, 1);
 	ADDHASH("SHA1-32", HasherSHA1_32, 1);
 	ADDHASH("FNV-1amod", FNV1aModifiedHash, 1);
-	ADDHASH("djb2", djb2_hash, 0);
+	ADDHASH("djb2", djb2_hash, 1);
 
 #	undef ADDHASH
 
