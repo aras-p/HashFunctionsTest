@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <string>
-#include <set>
+#include <unordered_set>
 #include <map>
 #include <stdio.h>
 #include <math.h>
@@ -174,6 +174,16 @@ static double CalculateExpectedCollisions(size_t bucketCount, size_t entryCount)
 	return e;
 }
 
+namespace std
+{
+    template<> struct hash<myuint128_t>
+    {
+        std::size_t operator()(const myuint128_t& p) const noexcept
+        {
+            return p.a ^ p.b;
+        }
+    };
+}
 
 template<typename Hasher>
 void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResult)
@@ -182,11 +192,11 @@ void TestQualityOnDataSet(const DataSet& dataset, Result::DataSetResult& outResu
 
 	// test for "hash quality":
 	// unique hashes found in all the entries (#entries - uniq == how many collisions found)
-	std::set<typename Hasher::HashType> uniq;
+	std::unordered_set<typename Hasher::HashType> uniq;
 
 	// unique buckets that we'd end up with, if we had a hashtable with a load factor of 0.8 that is
 	// always power of two size.
-	std::set<typename Hasher::HashType> uniqModulo;
+	std::unordered_set<typename Hasher::HashType> uniqModulo;
 	const size_t entryCount = dataset.entries.size();
 	size_t hashtableSize = NextPowerOfTwo(entryCount / 0.8);
 
@@ -468,9 +478,9 @@ static void LoadDataSets(const char* folderName)
 	data = ReadDataSet(folderName, "TestData/test-binary.bin"); if (data) g_DataSets.push_back(data);
 }
 
-static void PrintResults()
+static void PrintResults(float qtime)
 {
-	fprintf(g_OutputFile, "**** Quality evaluation\n");
+	fprintf(g_OutputFile, "**** Quality evaluation (took %.2fs)\n", qtime);
 	for (size_t id = 0; id < g_DataSets.size(); ++id)
 	{
 		const DataSet& data = *g_DataSets[id];
@@ -581,6 +591,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 
 	// do quality evaluations on all hash functions
 	fprintf(g_OutputFile, "Doing quality evals...\n  ");
+    TimerBegin();
 	for (size_t i = 0; i < g_Hashes.size(); ++i)
 	{
 		const HashToTest& hash = g_Hashes[i];
@@ -596,6 +607,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 		}
 	}
 	fprintf(g_OutputFile, "\n");
+    float qtime = TimerEnd();
 
 	// Do performance evaluations on all hash functions.
 	// Perform several iterations: for (iterations) { for (hashes) { DoPerfTest } }.
@@ -629,7 +641,7 @@ extern "C" void HashFunctionsTestEntryPoint(const char* folderName)
 	}
 
 	// print results
-	PrintResults();
+	PrintResults(qtime);
 }
 
 

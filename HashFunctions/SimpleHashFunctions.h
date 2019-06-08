@@ -20,6 +20,10 @@ struct myuint128_t {
 			return a < o.a;
 		return b < o.b;
 	}
+    bool operator==(const myuint128_t& o) const
+    {
+        return a==o.a && b==o.b;
+    }
 };
 struct Hasher128Bit { typedef myuint128_t HashType; };
 
