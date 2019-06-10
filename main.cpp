@@ -12,7 +12,7 @@
 #include "HashFunctions/xxhash.h"
 #include "HashFunctions/t1ha.h"
 
-#if __x86_64__ || _M_AMD64 || __i386__  || _M_IX86
+#if __x86_64__ || _M_AMD64
 #define MEOW_AVAILABLE 1
 #endif
 #if MEOW_AVAILABLE
