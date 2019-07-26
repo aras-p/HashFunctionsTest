@@ -1,6 +1,6 @@
 Loading data
 Doing quality evals...
-  Meow-128 XXH3-128 t1ha2-128 SpookyV2-128
+  XXH3-128 t1ha2-128 SpookyV2-128
 Doing performance evals...
   iter 1/9
   iter 2/9
@@ -21,77 +21,73 @@ Doing performance evals...
   iter 7/9
   iter 8/9
   iter 9/9
-**** Quality evaluation (took 0.84s)
+**** Quality evaluation (took 0.57s)
 TestData/test-words.txt, 235886 entries, 2.2 MB size, avg length 9.6
 HashAlgorithm   Colis HTColsIncrease hashsum
-       Meow-128    0      0           5d6c234c45fe5e2e
        XXH3-128    1      0           371a64b5b5a485e1
       t1ha2-128    0      0           296863a10df4b7d7
    SpookyV2-128    0      0           3c0bfdedc519d992
 TestData/test-filenames.txt, 101152 entries, 5.5 MB size, avg length 56.8
 HashAlgorithm   Colis HTColsIncrease hashsum
-       Meow-128    0      0           bb2d44ebf422668e
        XXH3-128    0      0           cdb78ed0ff1504e7
       t1ha2-128    0      0           7125260244230f8c
    SpookyV2-128    0      0           1f3018ac8193a215
 TestData/test-code.txt, 6069 entries, 43.7 MB size, avg length 7546.6
 HashAlgorithm   Colis HTColsIncrease hashsum
-       Meow-128    0      0           725ada62561e3dd0
        XXH3-128    0      0           574e800296e1a211
       t1ha2-128    0      0           b10d70db92d799ad
    SpookyV2-128    0      1           6ddb5859d0bdbdec
 TestData/test-binary.bin, 5742 entries, 0.3 MB size, avg length 54.6
 HashAlgorithm   Colis HTColsIncrease hashsum
-       Meow-128    0      0           1328b7a29fd57cdf
        XXH3-128    3      1           967e58b227e235fb
       t1ha2-128    0      0           eb368e8da0f4000c
    SpookyV2-128    0      2           40480dd866348a9e
 
 **** Performance evaluation, MB/s
-DataSize,Meow-128,XXH3-128,t1ha2-128,SpookyV2-128,
-2,138,181,260,294,
-4,270,369,518,619,
-7,472,645,907,968,
-11,742,992,1311,1554,
-17,1175,1569,1856,1424,
-26,1894,2400,2747,2107,
-39,2690,3327,3817,3093,
-58,3928,4965,4868,3092,
-86,5481,6780,6355,3400,
-128,7811,9880,9595,4014,
-191,10321,8737,10100,4191,
-285,14782,5071,11685,6599,
-426,17733,6847,13318,7374,
-637,22785,9126,14364,9280,
-953,26362,11644,15256,11402,
-1427,30640,13517,15320,12469,
-2138,35014,15884,15884,13291,
-3204,36185,17992,16531,14346,
-4803,37584,19580,16942,14663,
+DataSize,XXH3-128,t1ha2-128,SpookyV2-128,
+2,91,52,48,
+4,158,105,98,
+7,277,174,171,
+11,410,267,240,
+17,417,379,224,
+26,634,500,327,
+39,686,719,510,
+58,1037,875,513,
+86,1233,1154,600,
+128,1535,1603,714,
+191,1471,1618,759,
+285,2081,1797,1741,
+426,2933,2000,1929,
+637,3771,2162,2253,
+953,5340,2235,2540,
+1427,6633,2333,2735,
+2138,7942,2376,2799,
+3204,9148,2448,2947,
+4803,10756,2475,2986,
 
 
 **** Aligned data performance evaluation, MB/s
-DataSize,Meow-128,XXH3-128,t1ha2-128,SpookyV2-128,
-2,142,180,260,295,
-4,270,366,517,619,
-7,478,641,907,968,
-11,803,987,1311,1554,
-17,1231,1560,1860,1424,
-26,1886,2387,2747,2107,
-39,2676,3333,3824,3098,
-58,3907,4924,4876,3095,
-86,5454,6801,6373,3405,
-128,7774,9880,9650,4009,
-191,10289,8737,10100,4186,
-285,14782,5019,11731,6613,
-426,17733,6847,13318,7374,
-637,22785,9101,14364,9254,
-953,26574,11644,15326,11402,
-1427,30640,13461,15393,12469,
-2138,35014,15884,15884,13291,
-3204,36185,18092,16615,14283,
-4803,38021,19463,17030,14729,
+DataSize,XXH3-128,t1ha2-128,SpookyV2-128,
+2,91,52,49,
+4,158,106,99,
+7,295,175,171,
+11,421,269,240,
+17,407,382,225,
+26,633,503,327,
+39,690,724,510,
+58,1050,885,513,
+86,1256,1134,600,
+128,1537,1596,713,
+191,1477,1644,753,
+285,2102,1811,1738,
+426,2983,2032,1930,
+637,3841,2153,2253,
+953,5349,2266,2542,
+1427,6716,2365,2735,
+2138,8000,2389,2802,
+3204,9148,2441,2947,
+4803,10791,2494,2991,
 
 
-D:\projects\HashFunctionsTest\vs2017\..\HashFunctionsTest.exe (process 16932) exited with code 0.
+D:\projects\HashFunctionsTest\vs2017\..\HashFunctionsTest.exe (process 8644) exited with code 0.
 Press any key to close this window . . .
